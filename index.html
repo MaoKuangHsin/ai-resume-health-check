@@ -1,0 +1,1780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>AI Resume Health Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#F6F1E7;
+    --bg-soft:#EFE7D8;
+    --surface:#FFFDF8;
+    --surface-2:#FBF6EC;
+    --ink:#22303E;
+    --ink-soft:#5A6B7A;
+    --navy:#1E3A5F;
+    --navy-deep:#16294A;
+    --navy-soft:#2C5282;
+    --gold:#B9822E;
+    --gold-soft:#F3E7CE;
+    --line:#E2D7C3;
+    --line-strong:#CDBE9E;
+    --good:#2E7D5B;
+    --good-bg:#E3F0E8;
+    --warn:#A96F14;
+    --warn-bg:#F7ECD2;
+    --bad:#B03A2E;
+    --bad-bg:#F8E4DF;
+    --chip:#EEF2F7;
+    --shadow:0 10px 30px rgba(30,58,95,.08), 0 2px 6px rgba(30,58,95,.05);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#12181F;
+      --bg-soft:#182029;
+      --surface:#1C2631;
+      --surface-2:#212D3B;
+      --ink:#EDE7D8;
+      --ink-soft:#A9B4BF;
+      --navy:#8FB4DC;
+      --navy-deep:#D7E5F5;
+      --navy-soft:#7FA8D9;
+      --gold:#D9A44A;
+      --gold-soft:#33301F;
+      --line:#33414F;
+      --line-strong:#46586B;
+      --good:#6FC79B;
+      --good-bg:#1E3329;
+      --warn:#E0B45C;
+      --warn-bg:#38311C;
+      --bad:#F0917F;
+      --bad-bg:#3D2721;
+      --chip:#26313D;
+      --shadow:0 10px 30px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.25);
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Noto Sans JP","PingFang TC","Microsoft JhengHei",sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  button,select,textarea,input{font:inherit}
+  button,[role="button"],select,summary{min-height:2.5rem}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px 72px}
+
+  /* ---------- Header ---------- */
+  header{padding:38px 0 8px}
+  .topline{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between}
+  h1{
+    font-family:"Source Serif 4",Georgia,"Noto Serif TC",serif;
+    font-size:clamp(30px,5vw,44px);
+    line-height:1.12;
+    margin:0 0 10px;
+    color:var(--navy-deep);
+    font-weight:700;
+    letter-spacing:-.01em;
+    max-width:640px;
+  }
+  .lede{margin:0;max-width:620px;color:var(--ink-soft);font-size:17px}
+  .lang-switch{
+    display:flex;background:var(--surface);border:1px solid var(--line);
+    border-radius:999px;padding:4px;gap:2px;box-shadow:var(--shadow);flex-shrink:0;
+  }
+  .lang-switch button{
+    border:0;background:transparent;color:var(--ink-soft);cursor:pointer;
+    padding:8px 16px;border-radius:999px;font-weight:600;font-size:14px;min-height:2.5rem;
+  }
+  .lang-switch button.active{background:var(--navy);color:#FFFDF8}
+  @media (prefers-color-scheme: dark){ .lang-switch button.active{background:var(--navy-soft);color:#10161D} }
+  .privacy-note{
+    display:flex;gap:10px;align-items:flex-start;margin-top:20px;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:12px;
+    padding:12px 16px;font-size:14px;color:var(--ink-soft);max-width:760px;
+  }
+  .privacy-note svg{flex-shrink:0;margin-top:2px}
+  .privacy-note strong{color:var(--ink)}
+
+  /* ---------- Panels ---------- */
+  .panel{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  section{margin-top:26px}
+  .step-head{display:flex;align-items:baseline;gap:12px;margin:0 0 14px}
+  .step-num{
+    font-family:"Source Serif 4",Georgia,serif;font-weight:700;color:var(--gold);
+    font-size:15px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+  }
+  .step-head h2{font-size:20px;margin:0;color:var(--navy-deep);font-weight:700}
+  .step-head p{margin:0;color:var(--ink-soft);font-size:14px}
+
+  /* Role picker */
+  .role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+  .role-btn{
+    text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;
+    padding:14px 16px;cursor:pointer;color:var(--ink);transition:border-color .15s, background .15s;
+  }
+  .role-btn .r-title{display:block;font-weight:700;font-size:15px;color:var(--navy-deep)}
+  .role-btn .r-sub{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:3px;line-height:1.4}
+  .role-btn:hover{border-color:var(--line-strong)}
+  .role-btn.selected{border-color:var(--navy);background:var(--chip)}
+  .role-btn.selected .r-title{color:var(--navy)}
+
+  /* Samples */
+  .sample-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .sample-btn{
+    display:inline-flex;align-items:center;gap:8px;background:var(--surface);
+    border:1.5px solid var(--line);border-radius:999px;padding:9px 18px;cursor:pointer;
+    font-weight:600;font-size:14px;color:var(--navy-deep);
+  }
+  .sample-btn:hover{border-color:var(--navy)}
+  .sample-hint{font-size:13.5px;color:var(--ink-soft)}
+
+  /* Textareas */
+  .input-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:820px){ .input-grid{grid-template-columns:1fr} }
+  .field{padding:18px}
+  .field-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+  .field-head label{font-weight:700;color:var(--navy-deep);font-size:15px}
+  .field-tools{display:flex;gap:6px;align-items:center}
+  .mini-btn{
+    border:1px solid var(--line);background:var(--surface-2);color:var(--ink-soft);
+    border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;font-weight:600;min-height:2.25rem;
+  }
+  .mini-btn:hover{color:var(--ink);border-color:var(--line-strong)}
+  .word-count{font-size:12.5px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  textarea{
+    width:100%;min-height:300px;resize:vertical;border:1px solid var(--line);border-radius:10px;
+    background:var(--surface-2);color:var(--ink);padding:14px;font-size:14px;line-height:1.6;
+  }
+  textarea:focus{outline:2px solid var(--navy-soft);outline-offset:1px;border-color:transparent}
+  textarea::placeholder{color:var(--ink-soft);opacity:.75}
+  .field-error{display:none;margin-top:10px;color:var(--bad);font-size:13.5px;font-weight:600}
+  .field-error.show{display:block}
+
+  /* Upload & URL fetch */
+  .upload-zone{
+    border:1.5px dashed var(--line-strong);border-radius:10px;background:var(--surface);
+    padding:14px;margin-bottom:12px;transition:border-color .15s, background .15s;
+  }
+  .upload-zone.drag{border-color:var(--navy);background:var(--chip)}
+  .upload-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .upload-btn{
+    display:inline-flex;align-items:center;gap:8px;background:var(--navy);color:#FFFDF8;border:0;
+    border-radius:9px;padding:9px 16px;cursor:pointer;font-weight:700;font-size:14px;min-height:2.5rem;
+  }
+  .upload-btn:hover{background:var(--navy-deep)}
+  @media (prefers-color-scheme: dark){ .upload-btn{background:var(--navy-soft);color:#10161D} .upload-btn:hover{background:var(--navy)} }
+  .upload-btn:disabled{opacity:.6;cursor:wait}
+  .upload-hint{font-size:13px;color:var(--ink-soft);line-height:1.45}
+  .file-meta{
+    display:none;margin-top:11px;background:var(--good-bg);color:var(--good);border-radius:8px;
+    padding:9px 12px;font-size:13.5px;font-weight:600;word-break:break-word;
+  }
+  .file-meta.show{display:block}
+  .fetch-status{display:none;margin:10px 0 0;font-size:13.5px;line-height:1.55}
+  .fetch-status.show{display:block}
+  .fetch-status.ok{color:var(--good);font-weight:600}
+  .fetch-status.err{color:var(--bad)}
+  .fetch-status.info{color:var(--ink-soft)}
+  .fetch-status a{color:inherit;text-decoration:underline}
+  .url-box{margin-bottom:12px}
+  .url-row{display:flex;gap:8px;flex-wrap:wrap}
+  .url-row input{
+    flex:1 1 200px;min-width:0;border:1px solid var(--line);border-radius:9px;
+    background:var(--surface);color:var(--ink);padding:10px 12px;font-size:14px;min-height:2.5rem;
+  }
+  .url-row input:focus{outline:2px solid var(--navy-soft);outline-offset:1px;border-color:transparent}
+  .fetch-btn{
+    background:var(--surface);border:1.5px solid var(--navy);color:var(--navy);border-radius:9px;
+    padding:9px 18px;cursor:pointer;font-weight:700;font-size:14px;min-height:2.5rem;white-space:nowrap;
+  }
+  @media (prefers-color-scheme: dark){ .fetch-btn{border-color:var(--navy-soft);color:var(--navy)} }
+  .fetch-btn:hover{background:var(--chip)}
+  .fetch-btn:disabled{opacity:.6;cursor:wait}
+  .url-hint{font-size:12.5px;color:var(--ink-soft);margin:8px 0 0;line-height:1.5}
+
+  .analyze-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:22px}
+  .analyze-btn{
+    background:var(--navy);color:#FFFDF8;border:0;border-radius:12px;cursor:pointer;
+    padding:14px 34px;font-size:17px;font-weight:700;box-shadow:var(--shadow);
+    display:inline-flex;align-items:center;gap:10px;min-height:3.25rem;
+  }
+  .analyze-btn:hover{background:var(--navy-deep)}
+  @media (prefers-color-scheme: dark){ .analyze-btn{background:var(--navy-soft);color:#10161D} .analyze-btn:hover{background:var(--navy)} }
+  .analyze-hint{color:var(--ink-soft);font-size:13.5px}
+
+  /* ---------- Results ---------- */
+  #results{display:none}
+  #results.show{display:block}
+  .score-layout{display:grid;grid-template-columns:300px 1fr;gap:0;overflow:hidden}
+  @media (max-width:820px){ .score-layout{grid-template-columns:1fr} }
+  .score-main{
+    padding:28px 24px;text-align:center;border-right:1px solid var(--line);
+    background:var(--surface-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  }
+  @media (max-width:820px){ .score-main{border-right:0;border-bottom:1px solid var(--line)} }
+  .ring-wrap{position:relative;width:168px;height:168px}
+  .ring-wrap svg{transform:rotate(-90deg)}
+  .ring-bg{stroke:var(--line)}
+  .ring-fg{stroke:var(--navy);transition:stroke-dashoffset 1s ease}
+  @media (prefers-color-scheme: dark){ .ring-fg{stroke:var(--navy-soft)} }
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring-score{font-family:"Source Serif 4",Georgia,serif;font-size:52px;font-weight:700;color:var(--navy-deep);line-height:1}
+  .ring-of{font-size:13px;color:var(--ink-soft)}
+  .score-verdict{font-weight:700;font-size:17px;color:var(--navy-deep);margin-top:8px}
+  .score-verdict-sub{font-size:13.5px;color:var(--ink-soft);max-width:230px}
+  .score-detail{padding:24px 26px}
+  .score-detail h3{margin:0 0 16px;font-size:15px;color:var(--navy-deep)}
+  .bar-row{display:grid;grid-template-columns:170px 1fr 44px;gap:12px;align-items:center;margin-bottom:13px;font-size:14px}
+  @media (max-width:560px){ .bar-row{grid-template-columns:120px 1fr 40px} }
+  .bar-row .b-label{color:var(--ink)}
+  .bar-track{height:9px;background:var(--bg-soft);border-radius:99px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:99px;background:var(--navy);width:0;transition:width .8s ease}
+  @media (prefers-color-scheme: dark){ .bar-fill{background:var(--navy-soft)} }
+  .bar-fill.mid{background:var(--gold)}
+  .bar-fill.low{background:var(--bad)}
+  .bar-val{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+  .stat-strip{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .stat{
+    background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px;font-size:13px;color:var(--ink-soft);
+  }
+  .stat strong{display:block;font-size:19px;color:var(--navy-deep);font-variant-numeric:tabular-nums}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:820px){ .two-col{grid-template-columns:1fr} }
+  .card{padding:22px 24px}
+  .card h3{margin:0 0 6px;font-size:16px;color:var(--navy-deep);display:flex;align-items:center;gap:9px}
+  .card h3 .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .dot.good{background:var(--good)} .dot.bad{background:var(--bad)} .dot.gold{background:var(--gold)} .dot.navy{background:var(--navy)}
+  .card .card-sub{font-size:13.5px;color:var(--ink-soft);margin:0 0 14px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{
+    font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;line-height:1.35;
+  }
+  .chip.present{background:var(--good-bg);color:var(--good)}
+  .chip.missing{background:var(--bad-bg);color:var(--bad)}
+  .chip.extra{background:var(--chip);color:var(--ink-soft)}
+  .empty-note{font-size:14px;color:var(--ink-soft);font-style:italic}
+  ul.clean{list-style:none;margin:0;padding:0}
+  ul.clean li{padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px;display:flex;gap:10px;align-items:flex-start}
+  ul.clean li:last-child{border-bottom:0}
+  ul.clean li .ic{flex-shrink:0;margin-top:1px}
+
+  /* Fix checklist */
+  .fix-item{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+  .fix-item:last-child{border-bottom:0}
+  .prio{
+    flex-shrink:0;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+    padding:5px 10px;border-radius:6px;margin-top:2px;min-width:64px;text-align:center;
+  }
+  .prio.high{background:var(--bad-bg);color:var(--bad)}
+  .prio.med{background:var(--warn-bg);color:var(--warn)}
+  .prio.low{background:var(--chip);color:var(--ink-soft)}
+  .fix-item .f-title{font-weight:700;font-size:15px;color:var(--ink)}
+  .fix-item .f-desc{font-size:14px;color:var(--ink-soft);margin-top:2px}
+
+  /* Rewrites */
+  .rewrite{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;background:var(--surface-2)}
+  .rewrite:last-child{margin-bottom:0}
+  .rw-label{font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+  .rw-label.before{color:var(--bad)} .rw-label.after{color:var(--good)}
+  .rw-text{font-size:14.5px;line-height:1.55}
+  .rw-before{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:rgba(176,58,46,.45);margin-bottom:12px}
+  .rw-after{color:var(--ink)}
+  .rw-why{font-size:13px;color:var(--ink-soft);margin-top:10px;display:flex;gap:8px;align-items:flex-start}
+  .copy-btn{
+    margin-top:12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--navy-deep);
+    border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:700;min-height:2.25rem;
+  }
+  .copy-btn:hover{border-color:var(--navy)}
+  .copy-btn.copied{background:var(--good-bg);color:var(--good);border-color:var(--good)}
+
+  .download-row{margin-top:22px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .ghost-btn{
+    background:var(--surface);border:1.5px solid var(--navy);color:var(--navy);border-radius:12px;
+    padding:12px 24px;font-weight:700;cursor:pointer;font-size:15px;min-height:3rem;
+  }
+  @media (prefers-color-scheme: dark){ .ghost-btn{border-color:var(--navy-soft);color:var(--navy)} }
+  footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:13px;text-align:center}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .honesty{margin-top:18px}
+  .honesty p{font-size:14.5px;color:var(--ink-soft);margin:0 0 6px}
+  .bar-note{font-size:12.5px;color:var(--ink-soft);margin:-7px 0 13px;padding-left:182px}
+  @media (max-width:560px){ .bar-note{padding-left:132px} }
+  .fix-impact{font-size:12px;font-weight:700;color:var(--gold);white-space:nowrap}
+  .verdict-band{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:6px;background:var(--gold-soft);color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="topline">
+      <div>
+        <h1 data-i18n="title">AI Resume Health Check</h1>
+        <p class="lede" data-i18n="lede">Paste your resume and a job description. Get a match score, the skills you're missing, and concrete fixes — in about two seconds.</p>
+      </div>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang="en" class="active">EN</button>
+        <button type="button" data-lang="zh">繁中</button>
+        <button type="button" data-lang="ja">日本語</button>
+      </div>
+    </div>
+    <div class="privacy-note">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <span data-i18n="privacy"><strong>Private by design:</strong> everything runs in your browser. Your resume is never uploaded, stored, or sent anywhere.</span>
+    </div>
+  </header>
+
+  <!-- Step 1: role -->
+  <section aria-labelledby="role-h">
+    <div class="step-head">
+      <span class="step-num" data-i18n="step1">Step 1</span>
+      <h2 id="role-h" data-i18n="roleTitle">Choose your target role</h2>
+    </div>
+    <div class="role-grid" id="roleGrid"></div>
+  </section>
+
+  <!-- Step 2: samples -->
+  <section aria-labelledby="sample-h">
+    <div class="step-head">
+      <span class="step-num" data-i18n="step2">Step 2</span>
+      <h2 id="sample-h" data-i18n="sampleTitle">Paste your text — or try a sample</h2>
+    </div>
+    <div class="sample-row">
+      <button type="button" class="sample-btn" id="sample1Btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span data-i18n="sample1">Sample 1 · AI Solution Architect</span>
+      </button>
+      <button type="button" class="sample-btn" id="sample2Btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span data-i18n="sample2">Sample 2 · Data Scientist</span>
+      </button>
+      <span class="sample-hint" data-i18n="sampleHint">Loads a full resume + job description so you can see a report instantly.</span>
+    </div>
+  </section>
+
+  <!-- Step 3: inputs -->
+  <section aria-labelledby="input-h">
+    <div class="step-head">
+      <span class="step-num" data-i18n="step3">Step 3</span>
+      <h2 id="input-h" data-i18n="inputTitle">Your resume &amp; the job description</h2>
+    </div>
+    <div class="input-grid">
+      <div class="panel field">
+        <div class="field-head">
+          <label for="resumeInput" data-i18n="resumeLabel">Your resume</label>
+          <div class="field-tools">
+            <span class="word-count" id="resumeCount">0 words</span>
+            <button type="button" class="mini-btn" id="clearResume" data-i18n="clear">Clear</button>
+          </div>
+        </div>
+        <div class="upload-zone" id="resumeDrop">
+          <div class="upload-top">
+            <button type="button" class="upload-btn" id="uploadBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+              <span data-i18n="uploadBtn">Upload resume file</span>
+            </button>
+            <span class="upload-hint" data-i18n="uploadHint">PDF, DOCX or TXT — or drag &amp; drop the file here. Parsed on this device; the file itself is never sent anywhere.</span>
+          </div>
+          <input type="file" id="resumeFile" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden />
+          <div class="file-meta" id="fileMeta" role="status"></div>
+          <p class="fetch-status" id="uploadStatus" role="status"></p>
+        </div>
+        <textarea id="resumeInput" data-i18n-ph="resumePh" placeholder="Paste your full resume text here — summary, experience, skills, education…"></textarea>
+        <p class="field-error" id="resumeError" data-i18n="resumeError">Please paste your resume first — even a rough draft works.</p>
+      </div>
+      <div class="panel field">
+        <div class="field-head">
+          <label for="jdInput" data-i18n="jdLabel">Job description</label>
+          <div class="field-tools">
+            <span class="word-count" id="jdCount">0 words</span>
+            <button type="button" class="mini-btn" id="clearJd" data-i18n="clear">Clear</button>
+          </div>
+        </div>
+        <div class="url-box">
+          <div class="url-row">
+            <input type="url" id="jdUrl" data-i18n-ph="jdUrlPh" placeholder="Paste a job posting link (https://…)" inputmode="url" autocomplete="off" spellcheck="false" />
+            <button type="button" class="fetch-btn" id="fetchJdBtn" data-i18n="fetchBtn">Fetch job description</button>
+          </div>
+          <p class="url-hint" data-i18n="jdUrlHint">We open the posting page and pull out the job description text for you. Some sites (LinkedIn, many company career pages) block other websites from reading them — if that happens, pasting the text below works just as well.</p>
+          <p class="fetch-status" id="jdUrlStatus" role="status"></p>
+        </div>
+        <div class="upload-zone" id="jdDrop">
+          <div class="upload-top">
+            <button type="button" class="upload-btn" id="uploadJdBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+              <span data-i18n="uploadJdBtn">Upload job description file</span>
+            </button>
+            <span class="upload-hint" data-i18n="uploadHint">PDF, DOCX or TXT — or drag &amp; drop the file here. Parsed on this device; the file itself is never sent anywhere.</span>
+          </div>
+          <input type="file" id="jdFile" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden />
+          <div class="file-meta" id="jdFileMeta" role="status"></div>
+          <p class="fetch-status" id="jdUploadStatus" role="status"></p>
+        </div>
+        <textarea id="jdInput" data-i18n-ph="jdPh" placeholder="Paste the job posting you're targeting — responsibilities, requirements, skills…"></textarea>
+        <p class="field-error" id="jdError" data-i18n="jdError">Please paste a job description so we can compare against it.</p>
+      </div>
+    </div>
+    <div class="analyze-row">
+      <button type="button" class="analyze-btn" id="analyzeBtn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <span data-i18n="analyze">Run health check</span>
+      </button>
+      <span class="analyze-hint" data-i18n="analyzeHint">Scoring is keyword- and evidence-based — the same things an ATS and a busy hiring manager scan for.</span>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <div id="results" aria-live="polite">
+
+    <section aria-labelledby="score-h">
+      <div class="step-head">
+        <span class="step-num" data-i18n="reportStep">Report</span>
+        <h2 id="score-h" data-i18n="scoreTitle">Overall match</h2>
+      </div>
+      <div class="panel score-layout">
+        <div class="score-main">
+          <div class="ring-wrap">
+            <svg width="168" height="168" viewBox="0 0 168 168" aria-hidden="true">
+              <circle class="ring-bg" cx="84" cy="84" r="74" fill="none" stroke-width="13"/>
+              <circle class="ring-fg" id="ringFg" cx="84" cy="84" r="74" fill="none" stroke-width="13" stroke-linecap="round" stroke-dasharray="464.96" stroke-dashoffset="464.96"/>
+            </svg>
+            <div class="ring-center">
+              <span class="ring-score" id="scoreNum">0</span>
+              <span class="ring-of" data-i18n="outOf">out of 100</span>
+            </div>
+          </div>
+          <div class="score-verdict" id="scoreVerdict"></div>
+          <div class="score-verdict-sub" id="scoreVerdictSub"></div>
+        </div>
+        <div class="score-detail">
+          <h3 data-i18n="breakdownTitle">Where the points come from</h3>
+          <div id="bars"></div>
+          <div class="stat-strip" id="statStrip"></div>
+        </div>
+      </div>
+      <div class="panel card honesty">
+        <h3><span class="dot gold"></span><span data-i18n="honestTitle">How to read this score — honestly</span></h3>
+        <p data-i18n="honestBody">This is a keyword-and-evidence guide, not a real ATS and not a hiring decision. Real applicant tracking systems differ by company, and a human still makes the final call. Use the score to find gaps and weak wording — never add skills you don't actually have just to raise it. A resume that scores 75 with true, specific evidence beats a stuffed one at 95 in any real interview.</p>
+        <ul class="clean" id="scoreExplainers"></ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="skills-h">
+      <div class="step-head">
+        <span class="step-num" data-i18n="skillsStep">Skills</span>
+        <h2 id="skills-h" data-i18n="skillsTitle">Keyword &amp; skill match</h2>
+      </div>
+      <div class="two-col">
+        <div class="panel card">
+          <h3><span class="dot good"></span><span data-i18n="presentTitle">Skills you already show</span></h3>
+          <p class="card-sub" data-i18n="presentSub">Found in both the job description and your resume. Keep these — and move the most relevant ones higher.</p>
+          <div class="chips" id="presentChips"></div>
+        </div>
+        <div class="panel card">
+          <h3><span class="dot bad"></span><span data-i18n="missingTitle">Missing keywords</span></h3>
+          <p class="card-sub" data-i18n="missingSub">The job asks for these; your resume doesn't mention them. Add only the ones you genuinely have.</p>
+          <div class="chips" id="missingChips"></div>
+        </div>
+      </div>
+      <div class="panel card" style="margin-top:18px" id="extraCard">
+        <h3><span class="dot navy"></span><span data-i18n="extraTitle">Extra strengths on your resume</span></h3>
+        <p class="card-sub" data-i18n="extraSub">Relevant to this role family, even if this particular posting didn't name them.</p>
+        <div class="chips" id="extraChips"></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="gaps-h">
+      <div class="step-head">
+        <span class="step-num" data-i18n="gapsStep">Gaps</span>
+        <h2 id="gaps-h" data-i18n="gapsTitle">Experience &amp; requirements check</h2>
+      </div>
+      <div class="two-col">
+        <div class="panel card">
+          <h3><span class="dot gold"></span><span data-i18n="gapTitle">Experience gaps to address</span></h3>
+          <p class="card-sub" data-i18n="gapSub">Differences between what the posting asks for and what your resume evidences.</p>
+          <ul class="clean" id="gapList"></ul>
+        </div>
+        <div class="panel card">
+          <h3><span class="dot navy"></span><span data-i18n="formatTitle">Length &amp; formatting</span></h3>
+          <p class="card-sub" data-i18n="formatSub">The structural basics recruiters and ATS parsers rely on.</p>
+          <ul class="clean" id="formatList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="impact-h">
+      <div class="step-head">
+        <span class="step-num" data-i18n="impactStep">Impact</span>
+        <h2 id="impact-h" data-i18n="impactTitle">Action verbs &amp; quantified results</h2>
+      </div>
+      <div class="panel card">
+        <p class="card-sub" id="impactSummary" style="margin-bottom:6px"></p>
+        <ul class="clean" id="impactList"></ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="fix-h">
+      <div class="step-head">
+        <span class="step-num" data-i18n="fixStep">Fix list</span>
+        <h2 id="fix-h" data-i18n="fixTitle">Your fix checklist, in priority order</h2>
+      </div>
+      <div class="panel card">
+        <div id="fixList"></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="rw-h">
+      <div class="step-head">
+        <span class="step-num" data-i18n="rwStep">Rewrites</span>
+        <h2 id="rw-h" data-i18n="rwTitle">Suggested bullet rewrites</h2>
+      </div>
+      <div class="panel card">
+        <p class="card-sub" data-i18n="rwSub">Your weakest bullets, rewritten with a strong verb and a measurable result. Replace the bracketed numbers with your real figures before you send anything.</p>
+        <div id="rewriteList"></div>
+      </div>
+      <div class="download-row">
+        <button type="button" class="ghost-btn" id="copyReportBtn" data-i18n="copyReport">Copy full report</button>
+        <button type="button" class="ghost-btn" id="downloadBtn" data-i18n="download">Download report (.txt)</button>
+        <span class="analyze-hint" data-i18n="downloadHint">A plain-text copy of this report, generated on your device.</span>
+      </div>
+    </section>
+
+  </div>
+
+  <footer data-i18n="footer">AI Resume Health Check · Runs 100% in your browser · No account, no upload, no tracking</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script>
+"use strict";
+/* ============================================================
+   AI Resume Health Check — analysis is 100% client-side.
+   Resume/JD files are parsed locally and never sent anywhere.
+   The only network call is the one you trigger yourself:
+   fetching a job-posting URL you pasted.
+   ============================================================ */
+
+var LANG = "en";
+
+var L = {
+en: {
+  title: "AI Resume Health Check",
+  lede: "Paste your resume and a job description. Get a match score, the skills you're missing, and concrete fixes — in about two seconds.",
+  privacy: "<strong>Private by design:</strong> everything runs in your browser. Your resume is never uploaded, stored, or sent anywhere.",
+  step1: "Step 1", roleTitle: "Choose your target role",
+  step2: "Step 2", sampleTitle: "Paste your text — or try a sample",
+  sample1: "Sample 1 · AI Solution Architect", sample2: "Sample 2 · Data Scientist",
+  sampleHint: "Loads a full resume + job description so you can see a report instantly.",
+  step3: "Step 3", inputTitle: "Your resume & the job description",
+  resumeLabel: "Your resume", jdLabel: "Job description", clear: "Clear",
+  resumePh: "Paste your full resume text here — summary, experience, skills, education…",
+  jdPh: "Paste the job posting you're targeting — responsibilities, requirements, skills…",
+  resumeError: "Please paste your resume first — even a rough draft works.",
+  jdError: "Please paste a job description so we can compare against it.",
+  analyze: "Run health check",
+  analyzeHint: "Scoring is keyword- and evidence-based — the same things an ATS and a busy hiring manager scan for.",
+  reportStep: "Report", scoreTitle: "Overall match", outOf: "out of 100",
+  breakdownTitle: "Where the points come from",
+  honestTitle: "How to read this score — honestly",
+  honestBody: "This is a keyword-and-evidence guide, not a real ATS and not a hiring decision. Real applicant tracking systems differ by company, and a human still makes the final call. Use the score to find gaps and weak wording — never add skills you don't actually have just to raise it. A resume that scores 75 with true, specific evidence beats a stuffed one at 95 in any real interview.",
+  skillsStep: "Skills", skillsTitle: "Keyword & skill match",
+  presentTitle: "Skills you already show",
+  presentSub: "Found in both the job description and your resume. Keep these — and move the most relevant ones higher.",
+  missingTitle: "Missing keywords",
+  missingSub: "The job asks for these; your resume doesn't mention them. Add only the ones you genuinely have.",
+  extraTitle: "Extra strengths on your resume",
+  extraSub: "Relevant to this role family, even if this particular posting didn't name them.",
+  gapsStep: "Gaps", gapsTitle: "Experience & requirements check",
+  gapTitle: "Experience gaps to address", gapSub: "Differences between what the posting asks for and what your resume evidences.",
+  formatTitle: "Length & formatting", formatSub: "The structural basics recruiters and ATS parsers rely on.",
+  impactStep: "Impact", impactTitle: "Action verbs & quantified results",
+  fixStep: "Fix list", fixTitle: "Your fix checklist, in priority order",
+  rwStep: "Rewrites", rwTitle: "Suggested bullet rewrites",
+  rwSub: "Your weakest bullets, rewritten with a strong verb and a measurable result. Replace the bracketed numbers with your real figures before you send anything.",
+  copyReport: "Copy full report", download: "Download report (.txt)",
+  downloadHint: "A plain-text copy of this report, generated on your device.",
+  footer: "AI Resume Health Check · Runs 100% in your browser · No account, no upload, no tracking",
+  words: "words",
+  uploadBtn: "Upload resume file",
+  uploadJdBtn: "Upload job description file",
+  uploadHint: "PDF, DOCX or TXT — or drag & drop the file here. Parsed on this device; the file itself is never sent anywhere.",
+  jdUrlPh: "Paste a job posting link (https://…)",
+  fetchBtn: "Fetch job description",
+  jdUrlHint: "We open the posting page and pull out the job description text for you. Some sites (LinkedIn, many company career pages) block other websites from reading them — if that happens, pasting the text below works just as well.",
+  parsing: "Reading your file…",
+  fileReady: function(name, chars){ return "Loaded “" + name + "” — " + chars + " characters extracted. The text is in the box below; check it, then run the health check."; },
+  fileTooBig: "That file is over 15 MB. Please use a smaller file, or paste the text instead.",
+  fileUnsupported: "That file type isn't supported. Please use a PDF, DOCX or TXT file — or paste the text below.",
+  fileNoText: "We couldn't find any readable text in that file. If it's a scanned PDF (a picture of text), copy the text another way and paste it below.",
+  fileParseError: "Couldn't read that file — it may be damaged, password-protected, or the file reader failed to load. Try again, or paste the text below.",
+  fetching: "Fetching the posting…",
+  fetchOk: function(chars, host){ return "Fetched from " + host + " — " + chars + " characters extracted into the box below. Give it a quick check, then run the health check."; },
+  fetchInvalid: "That doesn't look like a valid link. Paste the full job posting URL, starting with https://",
+  fetchCors: "This site blocked the fetch — most job boards and company career pages (LinkedIn, Indeed, Greenhouse and many others) prevent other websites from reading their pages directly (a browser security rule called CORS), or require a login. Nothing is wrong with your link. Open the posting, copy the full job description text, and paste it into the box below instead — the health check works exactly the same.",
+  fetchEmpty: "We reached the page but couldn't find job description text on it — it may load its content in a way a simple fetch can't see. Please copy the posting text and paste it into the box below instead.",
+  charsUnit: "characters",
+  roles: {
+    architect: { name: "AI Solution Architect", sub: "Client-facing AI design, cloud architecture, GenAI solutions" },
+    engineer:  { name: "AI Engineer", sub: "Building & shipping LLM apps, models and pipelines" },
+    scientist: { name: "Data Scientist", sub: "Modeling, experimentation, statistical analysis" },
+    analyst:   { name: "Data Analyst", sub: "Dashboards, reporting, business insights" },
+    pm:        { name: "Product Manager", sub: "Product strategy, roadmaps, discovery & delivery" }
+  },
+  verdicts: [
+    { min: 85, t: "Strong match", s: "This resume speaks the job's language. Focus on polish and tailoring, not rewriting." },
+    { min: 70, t: "Good foundation", s: "Solid overlap. Closing the gaps below could move you into the top pile." },
+    { min: 55, t: "Partial match", s: "A real base to build on — but several things this job asks for aren't evidenced yet." },
+    { min: 40, t: "Significant gaps", s: "The posting and the resume are telling different stories. Work the fix list top-down." },
+    { min: 0,  t: "Weak match — for now", s: "Don't be discouraged: most gaps below are wording and evidence problems, which are fixable." }
+  ],
+  bars: { keywords: "Keyword match", impact: "Quantified impact", verbs: "Strong action verbs", experience: "Experience fit", structure: "Structure & format" },
+  barNotes: {
+    keywords: function(p, t){ return "Your resume covers " + p + " of the " + t + " skills this posting names. Weight: 35% of the total."; },
+    impact: function(a, b){ return a + " of " + b + " bullet points include a number, %, amount or scale. Weight: 20%."; },
+    verbs: function(a, b){ return a + " of " + b + " bullets open with a strong action verb. Weight: 15%."; },
+    experience: function(){ return "Years of experience and stated requirements (degree, certifications) vs. what the posting asks. Weight: 15%."; },
+    structure: function(a, b){ return a + " of " + b + " structural checks passed — contact details, sections, length. Weight: 15%."; }
+  },
+  stats: { words: "Resume words", bullets: "Bullet points", quantified: "With numbers", verbLed: "Verb-led" },
+  explainersTitle: "What each number means",
+  noPresent: "No overlapping skills found yet — the fix list below is your starting point.",
+  noMissing: "Nothing missing — every skill this posting names appears in your resume.",
+  noExtra: "No extra role-family skills detected beyond this posting's list.",
+  gaps: {
+    yearsOk: function(jd, r){ return "Experience length looks fine: the posting asks ~" + jd + " years; your resume evidences about " + r + "."; },
+    yearsShort: function(jd, r){ return "Experience gap: the posting asks ~" + jd + " years, but your resume evidences about " + r + ". Counter it with scope — team size, budget, users, regions — not just time."; },
+    yearsNone: "Couldn't find clear dates or a 'years of experience' statement. Recruiters skim for this — make your timeline unmissable.",
+    jdNoYears: "This posting doesn't state a years-of-experience requirement, so no gap was scored there.",
+    degreeOk: function(d){ return "Education matches: the posting asks for a " + d + " and your resume shows one."; },
+    degreeGap: function(d){ return "Education gap: the posting asks for a " + d + " (or equivalent). If you don't have it, lead with equivalent experience and certifications — and say 'equivalent experience' explicitly."; },
+    certGap: function(c){ return "Certification named in the posting but not on your resume: " + c + ". If you're pursuing it, write 'in progress' — that still counts for many screeners."; },
+    certOk: function(c){ return "Certification covered: " + c + "."; },
+    seniority: "The posting uses senior-level language ('lead', 'senior', 'principal'). Make sure your titles and scope words match that level — or the screener will file you a level down.",
+    domain: function(d){ return "Industry signal: the posting mentions " + d + ". If you have adjacent experience, name the industry explicitly in your summary."; }
+  },
+  fmt: {
+    emailOk: "Email address present.", emailNo: "No email address found — add one at the top; some ATS parsers require it.",
+    phoneOk: "Phone number present.", phoneNo: "No phone number found. Add one unless the posting says otherwise.",
+    linkedinOk: "LinkedIn (or portfolio) link present.", linkedinNo: "No LinkedIn / portfolio link. For AI & data roles, a LinkedIn or GitHub link noticeably helps human reviewers.",
+    sectionsOk: function(n){ return "Core sections detected: " + n + "."; },
+    sectionsNo: function(n){ return "Missing standard section(s): " + n + ". ATS parsers look for plain headings like 'Experience', 'Education', 'Skills'."; },
+    lenOk: function(w){ return "Length is in the healthy range (" + w + " words ≈ 1–2 pages)."; },
+    lenShort: function(w){ return "Quite short at " + w + " words. Under ~350 words usually means achievements are missing, not that you're concise."; },
+    lenLong: function(w){ return "Long at " + w + " words. Beyond ~1,000 words, cut oldest/least relevant roles first — recruiters skim, they don't study."; },
+    datesOk: "Employment dates are visible.", datesNo: "No clear employment dates found. Add month/year ranges — unexplained timelines read as gaps.",
+    bulletsFew: "Very few bullet points. Achievements scan far better as bullets than as paragraphs."
+  },
+  impact: {
+    summary: function(q, b, v){ return "Of " + b + " bullet points, " + q + " include a quantified result and " + v + " open with a strong action verb."; },
+    strong: "Strong evidence culture: most bullets carry numbers. Keep this up — it's what separates 'did tasks' from 'delivered outcomes'.",
+    mid: "Mixed evidence. The fastest upgrade on this whole report: add a number — %, time saved, users, revenue, scale — to the bullets that lack one.",
+    weak: "Almost no quantified results. Hiring managers read unquantified bullets as 'was present', not 'made a difference'. Every bullet below in the rewrite section is a candidate.",
+    verbTip: "Bullets that start with 'Responsible for', 'Worked on' or 'Helped' undersell you. Lead with the verb that names what you actually did: built, shipped, cut, grew, automated.",
+    noBullets: "No bullet points detected. If your resume uses paragraphs, convert achievements into bullets — each starting with a verb and ending with a result."
+  },
+  fixes: {
+    kwHigh: function(list){ return { t: "Add the missing core skills you genuinely have", d: "Not mentioned anywhere: " + list + ". If you have used them — even in a side project — name them in Skills and back each with one bullet. Never list a skill you can't discuss in an interview." }; },
+    kwMed: function(list){ return { t: "Weave in the remaining missing keywords", d: "Still absent: " + list + ". Work them into experience bullets where they're true, rather than stuffing a keyword list." }; },
+    quant: function(n, b){ return { t: "Quantify your results", d: "Only " + n + " of " + b + " bullets carry a number. Add scale to the rest: % improvement, hours saved, team size, users, data volume, revenue. Estimates you're confident about are fine — label them 'approx.' if unsure." }; },
+    verbs: function(){ return { t: "Replace weak bullet openers", d: "Swap 'Responsible for / Worked on / Helped' for verbs that claim the work: designed, shipped, automated, reduced, launched. See the rewrite section for your exact bullets." }; },
+    years: function(jd, r){ return { t: "Close the experience-length gap on paper", d: "Posting asks ~" + jd + " years; resume evidences ~" + r + ". You can't add years — but you can add density: bigger scope, senior responsibilities, and a summary line that frames total relevant experience explicitly." }; },
+    sections: function(n){ return { t: "Add the missing standard sections", d: "Not detected: " + n + ". Use these exact plain headings so parsers file your content correctly." }; },
+    contact: function(){ return { t: "Complete your contact block", d: "Email, phone and a LinkedIn/portfolio link belong at the very top. Missing contact details is the cheapest possible reason to be filtered out." }; },
+    lengthShort: function(){ return { t: "Expand thin experience entries", d: "Your resume is short for this level. Add 2–3 achievement bullets per role — projects, scale, outcomes — before adding more roles." }; },
+    lengthLong: function(){ return { t: "Cut to two pages", d: "Trim roles older than ~10 years to one line each, and drop skills you no longer use. Density beats completeness." }; },
+    degree: function(d){ return { t: "Address the degree requirement head-on", d: "The posting asks for a " + d + ". If yours differs, put education where it is (don't hide it) and let certifications + experience carry the argument in your summary's first line." }; },
+    summary: function(){ return { t: "Add a 2–3 line professional summary", d: "Open with role title + years + your two strongest, posting-relevant proof points. Screeners decide in ~7 seconds; the summary is what they actually read." }; },
+    tailoring: function(role){ return { t: "Mirror the posting's own words", d: "Where the posting says one term and you say a synonym, prefer theirs — for the " + role + " skills above especially. Same meaning, better matching." }; },
+    impactLabel: "Impact"
+  },
+  rw: {
+    before: "Before", after: "Suggested rewrite", copy: "Copy rewrite", copied: "Copied ✓",
+    whyWeak: "Why: the original names a duty, not a result. The rewrite leads with a strong verb and adds a measurable outcome.",
+    whyNoNum: "Why: good verb, but no scale. The bracketed figure is where your real number goes — replace it before sending.",
+    noneTitle: "No weak bullets found",
+    none: "Your bullets already lead with verbs and carry numbers. Nice work — focus your energy on the keyword gaps above instead."
+  },
+  report: {
+    header: "AI RESUME HEALTH CHECK — REPORT",
+    role: "Target role", score: "Overall match score",
+    present: "SKILLS PRESENT", missing: "MISSING KEYWORDS", extra: "EXTRA STRENGTHS",
+    gapsH: "EXPERIENCE & REQUIREMENTS", fmtH: "LENGTH & FORMATTING", impactH: "ACTION VERBS & NUMBERS",
+    fixH: "FIX CHECKLIST (priority order)", rwH: "SUGGESTED BULLET REWRITES",
+    note: "Note: keyword matching is a guide, not a real ATS. Add only skills you genuinely have.",
+    none: "(none)"
+  },
+  copiedReport: "Report copied ✓", copyFail: "Copy failed — use Download instead"
+}
+};
+
+L.zh = {
+  title: "AI 履歷健檢工具",
+  lede: "貼上你的履歷和職缺說明，幾秒內得到媒合分數、你缺少的技能，以及具體可行的修改建議。",
+  privacy: "<strong>隱私設計：</strong>所有分析都在你的瀏覽器裡完成。你的履歷不會被上傳、儲存或傳送到任何地方。",
+  step1: "步驟 1", roleTitle: "選擇你的目標職位",
+  step2: "步驟 2", sampleTitle: "貼上你的文字 — 或試用範例",
+  sample1: "範例 1 · AI 解決方案架構師", sample2: "範例 2 · 資料科學家",
+  sampleHint: "載入完整的履歷 + 職缺說明，讓你立刻看到一份報告。",
+  step3: "步驟 3", inputTitle: "你的履歷與職缺說明",
+  resumeLabel: "你的履歷", jdLabel: "職缺說明", clear: "清除",
+  resumePh: "在這裡貼上你的完整履歷 — 摘要、工作經歷、技能、學歷…",
+  jdPh: "貼上你想應徵的職缺 — 工作內容、應徵條件、所需技能…",
+  resumeError: "請先貼上你的履歷 — 就算是草稿也可以。",
+  jdError: "請貼上職缺說明，我們才能進行比對。",
+  analyze: "開始健檢",
+  analyzeHint: "評分以關鍵字和具體證據為基礎 — 這正是 ATS 系統和忙碌的主管快速掃描時看的東西。",
+  reportStep: "報告", scoreTitle: "整體媒合度", outOf: "滿分 100",
+  breakdownTitle: "分數是怎麼來的",
+  honestTitle: "誠實說明：這個分數該怎麼看",
+  honestBody: "這是一個以關鍵字和證據為基礎的參考工具，不是真正的 ATS 系統，也不是錄取決定。每家公司的 ATS 都不同，最後拍板的還是人。請用這個分數來找缺口和弱的寫法 — 絕對不要為了衝分數而加上你沒有的技能。一份 75 分、內容真實具體的履歷，在真正的面試裡絕對勝過 95 分灌水的履歷。",
+  skillsStep: "技能", skillsTitle: "關鍵字與技能媒合",
+  presentTitle: "你已經展現的技能",
+  presentSub: "同時出現在職缺和你的履歷裡。保留它們，並把最相關的往前放。",
+  missingTitle: "缺少的關鍵字",
+  missingSub: "職缺有要求，但你的履歷沒有提到。只加入你真正擁有的。",
+  extraTitle: "你履歷上的額外強項",
+  extraSub: "與這個職位領域相關，即使這份職缺沒有明寫。",
+  gapsStep: "缺口", gapsTitle: "經歷與條件檢查",
+  gapTitle: "需要補強的經歷缺口", gapSub: "職缺要求與你的履歷所能證明之間的落差。",
+  formatTitle: "長度與格式", formatSub: "招募人員和 ATS 解析器依賴的基本結構。",
+  impactStep: "影響力", impactTitle: "行動動詞與量化成果",
+  fixStep: "修改清單", fixTitle: "你的修改清單（依優先順序）",
+  rwStep: "改寫建議", rwTitle: "條列改寫建議",
+  rwSub: "把你最弱的條列改寫成強動詞 + 可衡量成果。送出之前，請把括號裡的數字換成你真實的數據。",
+  copyReport: "複製完整報告", download: "下載報告 (.txt)",
+  downloadHint: "這份報告的純文字版本，在你的裝置上產生。",
+  footer: "AI 履歷健檢工具 · 100% 在你的瀏覽器執行 · 無需帳號、不上傳、無追蹤",
+  words: "字",
+  uploadBtn: "上傳履歷檔案",
+  uploadJdBtn: "上傳職缺說明檔案",
+  uploadHint: "支援 PDF、DOCX 或 TXT — 也可以把檔案拖進來。解析在你的裝置上完成，檔案本身不會被傳送到任何地方。",
+  jdUrlPh: "貼上職缺頁面連結 (https://…)",
+  fetchBtn: "抓取職缺說明",
+  jdUrlHint: "我們會打開職缺頁面，幫你把職缺說明文字抓出來。有些網站（LinkedIn、許多公司徵才頁）會擋住其他網站讀取 — 如果被擋住，把文字貼到下面也完全一樣。",
+  parsing: "正在讀取檔案…",
+  fileReady: function(name, chars){ return "已載入「" + name + "」— 共擷取 " + chars + " 個字元。文字已經填入下面的框框；確認一下，就可以開始健檢。"; },
+  fileTooBig: "這個檔案超過 15 MB。請改用較小的檔案，或直接貼上文字。",
+  fileUnsupported: "不支援這個檔案格式。請使用 PDF、DOCX 或 TXT 檔案 — 或把文字貼到下面。",
+  fileNoText: "這個檔案裡找不到可讀的文字。如果它是掃描版 PDF（文字是圖片），請用其他方式複製文字，再貼到下面。",
+  fileParseError: "無法讀取這個檔案 — 可能已損壞、設有密碼，或檔案讀取工具載入失敗。請再試一次，或把文字貼到下面。",
+  fetching: "正在抓取職缺頁面…",
+  fetchOk: function(chars, host){ return "已從 " + host + " 抓取 — 共擷取 " + chars + " 個字元並填入下面的框框。快速確認一下，就可以開始健檢。"; },
+  fetchInvalid: "這看起來不像有效的連結。請貼上完整的職缺網址，以 https:// 開頭。",
+  fetchCors: "這個網站擋住了抓取 — 大多數求職平台和公司徵才頁（LinkedIn、Indeed、Greenhouse 等）會阻止其他網站直接讀取它們的頁面（這是瀏覽器的安全規則，叫做 CORS），或要求先登入。你的連結沒有問題。請打開該職缺，複製完整的職缺說明文字，貼到下面的框框 — 健檢效果完全一樣。",
+  fetchEmpty: "我們連上了頁面，但在上面找不到職缺說明文字 — 它可能用簡單抓取看不到的方式載入內容。請複製職缺文字，貼到下面的框框。",
+  charsUnit: "字元",
+  roles: {
+    architect: { name: "AI 解決方案架構師", sub: "面向客戶的 AI 設計、雲端架構、GenAI 解決方案" },
+    engineer:  { name: "AI 工程師", sub: "開發並交付 LLM 應用、模型與管線" },
+    scientist: { name: "資料科學家", sub: "建模、實驗設計、統計分析" },
+    analyst:   { name: "資料分析師", sub: "儀表板、報表、商業洞察" },
+    pm:        { name: "產品經理", sub: "產品策略、路線圖、探索與交付" }
+  },
+  verdicts: [
+    { min: 85, t: "高度媒合", s: "這份履歷說著這份工作的語言。接下來專注在潤飾和針對性調整，不需要重寫。" },
+    { min: 70, t: "基礎良好", s: "重疊度不錯。補上下面的缺口，就有機會進入前段名單。" },
+    { min: 55, t: "部分媒合", s: "有真實的基礎 — 但這份工作要求的幾件事，履歷還沒有證明。" },
+    { min: 40, t: "缺口明顯", s: "職缺和履歷在講不同的故事。照修改清單由上往下做。" },
+    { min: 0,  t: "目前媒合度弱", s: "別氣餒：下面的缺口大多是寫法和證據的問題，是可以修的。" }
+  ],
+  bars: { keywords: "關鍵字媒合", impact: "量化影響力", verbs: "強行動動詞", experience: "經歷符合度", structure: "結構與格式" },
+  barNotes: {
+    keywords: function(p, t){ return "這份職缺點名的 " + t + " 項技能中，你的履歷涵蓋了 " + p + " 項。佔總分 35%。"; },
+    impact: function(a, b){ return b + " 條條列中有 " + a + " 條包含數字、%、金額或規模。佔總分 20%。"; },
+    verbs: function(a, b){ return b + " 條條列中有 " + a + " 條以強行動動詞開頭。佔總分 15%。"; },
+    experience: function(){ return "工作年資與明列條件（學歷、證照）與職缺要求的比對。佔總分 15%。"; },
+    structure: function(a, b){ return b + " 項結構檢查通過了 " + a + " 項 — 聯絡資訊、章節、長度。佔總分 15%。"; }
+  },
+  stats: { words: "履歷字數", bullets: "條列數", quantified: "含量化數據", verbLed: "動詞開頭" },
+  explainersTitle: "每個數字代表什麼",
+  noPresent: "還沒有找到重疊的技能 — 下面的修改清單就是你的起點。",
+  noMissing: "沒有缺漏 — 這份職缺點名的每項技能都出現在你的履歷裡。",
+  noExtra: "除了這份職缺的清單外，沒有偵測到其他職位領域技能。",
+  gaps: {
+    yearsOk: function(jd, r){ return "經歷長度看起來沒問題：職缺要求約 " + jd + " 年；你的履歷約可證明 " + r + " 年。"; },
+    yearsShort: function(jd, r){ return "經歷缺口：職缺要求約 " + jd + " 年，但你的履歷約只能證明 " + r + " 年。用「範圍」來補 — 團隊規模、預算、使用者數、負責區域 — 而不只是時間。"; },
+    yearsNone: "找不到清楚的日期或「年資」敘述。招募人員會快速掃描這一點 — 讓你的時間軸一目了然。",
+    jdNoYears: "這份職缺沒有寫年資要求，所以這項沒有計分。",
+    degreeOk: function(d){ return "學歷符合：職缺要求" + d + "，你的履歷有顯示。"; },
+    degreeGap: function(d){ return "學歷缺口：職缺要求" + d + "（或同等資格）。如果你沒有，請以同等經歷和證照帶頭，並明確寫出「同等經歷」。"; },
+    certGap: function(c){ return "職缺點名但履歷上沒有的證照：" + c + "。如果你正在考，寫「進行中」— 對很多篩選者來說這也算數。"; },
+    certOk: function(c){ return "證照已涵蓋：" + c + "。"; },
+    seniority: "職缺用了資深層級的用語（lead、senior、principal）。確認你的職稱和負責範圍的措辭符合這個層級 — 否則會被歸到低一級。",
+    domain: function(d){ return "產業訊號：職缺提到了 " + d + "。如果你有相近經歷，在摘要裡明確寫出產業名稱。"; }
+  },
+  fmt: {
+    emailOk: "有電子郵件地址。", emailNo: "找不到電子郵件地址 — 請加在最上方；有些 ATS 解析器需要它。",
+    phoneOk: "有電話號碼。", phoneNo: "找不到電話號碼。除非職缺另有說明，請加上。",
+    linkedinOk: "有 LinkedIn（或作品集）連結。", linkedinNo: "沒有 LinkedIn / 作品集連結。對 AI 與資料職位來說，LinkedIn 或 GitHub 連結對真人審查者明顯有幫助。",
+    sectionsOk: function(n){ return "偵測到核心章節：" + n + "。"; },
+    sectionsNo: function(n){ return "缺少標準章節：" + n + "。ATS 解析器會找像「Experience」「Education」「Skills」這種直白的標題。"; },
+    lenOk: function(w){ return "長度在健康範圍內（" + w + " 字 ≈ 1–2 頁）。"; },
+    lenShort: function(w){ return "只有 " + w + " 字，偏短。低於約 350 字通常代表少的是成就，而不是你很精簡。"; },
+    lenLong: function(w){ return w + " 字，偏長。超過約 1,000 字時，先刪最舊、最不相關的經歷 — 招募人員是掃描，不是研讀。"; },
+    datesOk: "工作日期清楚可見。", datesNo: "找不到清楚的工作日期。請加上年月區間 — 沒有說明的時間軸會被讀成空窗。",
+    bulletsFew: "條列非常少。成就用條列呈現，遠比段落容易掃描。"
+  },
+  impact: {
+    summary: function(q, b, v){ return b + " 條條列中，有 " + q + " 條包含量化成果、" + v + " 條以強行動動詞開頭。"; },
+    strong: "證據文化很強：大多數條列都帶數字。保持下去 — 這正是「做過任務」和「交付成果」的差別。",
+    mid: "證據有好有壞。這份報告裡最快的升級：幫缺少數字的條列加上數字 — %、省下的時間、使用者數、營收、規模。",
+    weak: "幾乎沒有量化成果。沒有數字的主管會把條列讀成「有參與」，而不是「有做出差別」。下面改寫區的每一條都是候選。",
+    verbTip: "以「Responsible for」「Worked on」「Helped」開頭的條列會低估你自己。用真正命名你做了什麼的動詞帶頭：built、shipped、cut、grew、automated。",
+    noBullets: "沒有偵測到條列。如果你的履歷用段落寫，請把成就改成條列 — 每條以動詞開頭、以成果結尾。"
+  },
+  fixes: {
+    kwHigh: function(list){ return { t: "補上你真正擁有的核心缺失技能", d: "完全沒有提到：" + list + "。如果你用過 — 哪怕是 side project — 在技能區點名，並用一條條列佐證。絕對不要列你面試時講不出來的技能。" }; },
+    kwMed: function(list){ return { t: "把剩下的缺失關鍵字織進內容", d: "仍未出現：" + list + "。在真實的經歷條列裡帶到它們，而不是堆一串關鍵字清單。" }; },
+    quant: function(n, b){ return { t: "量化你的成果", d: b + " 條條列中只有 " + n + " 條有數字。幫其他條列加上規模：% 改善、省下時數、團隊人數、使用者數、資料量、營收。有把握的估計也可以 — 不確定時標註「約」。" }; },
+    verbs: function(){ return { t: "換掉弱的條列開頭", d: "把「Responsible for / Worked on / Helped」換成能主張成果的動詞：designed、shipped、automated、reduced、launched。你的確切條列請看改寫區。" }; },
+    years: function(jd, r){ return { t: "在紙面上縮小年資缺口", d: "職缺要求約 " + jd + " 年；履歷約證明 " + r + " 年。年資加不了 — 但密度可以：更大的負責範圍、資深職責，以及在摘要第一行明確框出總相關經歷。" }; },
+    sections: function(n){ return { t: "補上缺少的標準章節", d: "未偵測到：" + n + "。請使用這些直白的標題，解析器才能正確歸類你的內容。" }; },
+    contact: function(){ return { t: "補齊聯絡資訊區塊", d: "Email、電話和 LinkedIn/作品集連結應該放在最上方。缺聯絡資訊是最廉價的被淘汰理由。" }; },
+    lengthShort: function(){ return { t: "充實太薄的經歷條目", d: "以這個層級來說你的履歷偏短。每個職位先加 2–3 條成就條列 — 專案、規模、成果 — 再考慮加更多職位。" }; },
+    lengthLong: function(){ return { t: "刪減到兩頁", d: "把約 10 年以上的職位縮成每條一行，拿掉你不再使用的技能。密度勝過完整。" }; },
+    degree: function(d){ return { t: "正面回應學歷要求", d: "職缺要求" + d + "。如果你的不同，就把學歷放在它該在的位置（不要藏），讓證照 + 經歷在摘要第一行扛起論述。" }; },
+    summary: function(){ return { t: "加上 2–3 行的專業摘要", d: "以職稱 + 年資 + 兩個最強、與職缺相關的證明開場。篩選者約 7 秒做決定；摘要才是他們真正會讀的。" }; },
+    tailoring: function(role){ return { t: "使用職缺自己的用詞", d: "當職缺用一個詞、你用同義詞時，優先用他們的 — 尤其是上面的 " + role + " 技能。同樣的意思，更好的媒合。" }; },
+    impactLabel: "影響"
+  },
+  rw: {
+    before: "改寫前", after: "改寫建議", copy: "複製改寫", copied: "已複製 ✓",
+    whyWeak: "原因：原文寫的是職責，不是成果。改寫用強動詞帶頭，並加上可衡量的結果。",
+    whyNoNum: "原因：動詞不錯，但沒有規模。括號裡的數字就是放你真實數據的地方 — 送出前務必換掉。",
+    noneTitle: "沒有發現弱條列",
+    none: "你的條列已經用動詞帶頭並帶有數字，做得很好 — 把精力放在上面的關鍵字缺口吧。"
+  },
+  report: {
+    header: "AI 履歷健檢 — 報告",
+    role: "目標職位", score: "整體媒合分數",
+    present: "已展現的技能", missing: "缺少的關鍵字", extra: "額外強項",
+    gapsH: "經歷與條件", fmtH: "長度與格式", impactH: "行動動詞與數字",
+    fixH: "修改清單（依優先順序）", rwH: "條列改寫建議",
+    note: "注意：關鍵字媒合只是參考，不是真正的 ATS。只加入你真正擁有的技能。",
+    none: "（無）"
+  },
+  copiedReport: "報告已複製 ✓", copyFail: "複製失敗 — 請改用下載"
+};
+
+L.ja = {
+  title: "AI 履歴書ヘルスチェック",
+  lede: "履歴書と求人票を貼るだけで、マッチスコア、不足しているスキル、具体的な改善案が数秒で分かります。",
+  privacy: "<strong>プライバシー設計：</strong>すべての分析はブラウザ内で完結します。履歴書がアップロード、保存、送信されることは一切ありません。",
+  step1: "ステップ 1", roleTitle: "目標職種を選ぶ",
+  step2: "ステップ 2", sampleTitle: "テキストを貼る — またはサンプルを試す",
+  sample1: "サンプル 1 · AIソリューションアーキテクト", sample2: "サンプル 2 · データサイエンティスト",
+  sampleHint: "履歴書＋求人票のフルセットを読み込み、すぐにレポートを確認できます。",
+  step3: "ステップ 3", inputTitle: "あなたの履歴書と求人票",
+  resumeLabel: "あなたの履歴書", jdLabel: "求人票", clear: "クリア",
+  resumePh: "履歴書の全文をここに貼ってください — サマリー、職務経歴、スキル、学歴…",
+  jdPh: "応募したい求人票を貼ってください — 業務内容、応募条件、必要スキル…",
+  resumeError: "まず履歴書を貼ってください — 下書きでも大丈夫です。",
+  jdError: "比較のために求人票を貼ってください。",
+  analyze: "ヘルスチェック実行",
+  analyzeHint: "スコアはキーワードと具体的な証拠に基づきます — ATSと忙しい採用担当者が実際に見るポイントです。",
+  reportStep: "レポート", scoreTitle: "総合マッチ度", outOf: "100点満点",
+  breakdownTitle: "スコアの内訳",
+  honestTitle: "このスコアの正直な読み方",
+  honestBody: "これはキーワードと証拠に基づくガイドであり、本物のATSでも採用判断でもありません。実際のATSは企業ごとに異なり、最終判断は人が行います。スコアは弱点や表現の改善点を見つけるために使い、持っていないスキルを盛ってスコアを上げることは絶対に避けてください。真実で具体的な証拠のある75点の履歴書は、面接では水増しした95点に勝ります。",
+  skillsStep: "スキル", skillsTitle: "キーワード＆スキルマッチ",
+  presentTitle: "すでに示せているスキル",
+  presentSub: "求人票と履歴書の両方に登場。これらは残し、最も関連性の高いものを上に配置しましょう。",
+  missingTitle: "不足しているキーワード",
+  missingSub: "求人票が求めているのに、履歴書に記載がないもの。本当に持っているものだけを追加してください。",
+  extraTitle: "履歴書にある追加の強み",
+  extraSub: "この求人票に名前がなくても、職種ファミリーに関連するスキルです。",
+  gapsStep: "ギャップ", gapsTitle: "経験・要件チェック",
+  gapTitle: "対処すべき経験ギャップ", gapSub: "求人票の要求と、履歴書が証明できている内容との差です。",
+  formatTitle: "長さと書式", formatSub: "採用担当者とATSパーサーが頼りにする基本構造です。",
+  impactStep: "インパクト", impactTitle: "アクション動詞と定量的な成果",
+  fixStep: "修正リスト", fixTitle: "優先順位つき修正チェックリスト",
+  rwStep: "リライト", rwTitle: "箇条書きリライト案",
+  rwSub: "最も弱い箇条書きを、強い動詞と測定可能な成果で書き直しました。括弧内の数字は送信前に必ず実績値に置き換えてください。",
+  copyReport: "レポート全文をコピー", download: "レポートをダウンロード (.txt)",
+  downloadHint: "このレポートのプレーンテキスト版。あなたの端末上で生成されます。",
+  footer: "AI 履歴書ヘルスチェック · ブラウザ内で100%実行 · アカウント不要、アップロードなし、トラッキングなし",
+  words: "語",
+  uploadBtn: "履歴書ファイルをアップロード",
+  uploadJdBtn: "求人票ファイルをアップロード",
+  uploadHint: "PDF、DOCX、TXT 対応 — ファイルをここにドラッグ＆ドロップもできます。解析はこの端末上で行われ、ファイルがどこかに送信されることはありません。",
+  jdUrlPh: "求人票のリンクを貼る (https://…)",
+  fetchBtn: "求人票を取得",
+  jdUrlHint: "求人ページを開き、求人票のテキストを抽出します。サイトによっては（LinkedIn、多くの企業採用ページ）他のウェブサイトからの読み取りをブロックします — その場合は下にテキストを貼れば全く同じように使えます。",
+  parsing: "ファイルを読み取り中…",
+  fileReady: function(name, chars){ return "「" + name + "」を読み込みました — " + chars + " 文字を抽出。下のボックスにテキストが入っています。確認してからヘルスチェックを実行してください。"; },
+  fileTooBig: "ファイルが15MBを超えています。小さいファイルを使うか、テキストを貼ってください。",
+  fileUnsupported: "対応していないファイル形式です。PDF、DOCX、TXT のいずれかを使うか、下にテキストを貼ってください。",
+  fileNoText: "このファイルから読み取れるテキストが見つかりませんでした。スキャンされたPDFや写真の場合、別の方法でテキストをコピーして下に貼ってください。",
+  fileParseError: "このファイルを読み取れませんでした — 破損、パスワード保護、またはリーダーの読み込み失敗の可能性があります。再度試すか、下にテキストを貼ってください。",
+  fetching: "求人ページを取得中…",
+  fetchOk: function(chars, host){ return host + " から取得しました — " + chars + " 文字を抽出し、下のボックスに入力しました。軽く確認してからヘルスチェックを実行してください。"; },
+  fetchInvalid: "有効なリンクではないようです。https:// で始まる求人票の完全なURLを貼ってください。",
+  fetchCors: "このサイトが取得をブロックしました — ほとんどの求人プラットフォームや企業採用ページ（LinkedIn、Indeed、Greenhouseなど）は、他のウェブサイトがページを直接読むことを防いでいます（CORSというブラウザのセキュリティ規則）。またはログインが必要です。リンクに問題はありません。求人票を開き、全文をコピーして下のボックスに貼ってください — ヘルスチェックは全く同じように動きます。",
+  fetchEmpty: "ページには到達しましたが、求人票のテキストが見つかりませんでした — 単純な取得では見えない方法で読み込まれている可能性があります。求人票のテキストをコピーして下のボックスに貼ってください。",
+  charsUnit: "文字",
+  roles: {
+    architect: { name: "AIソリューションアーキテクト", sub: "顧客向けAI設計、クラウドアーキテクチャ、GenAIソリューション" },
+    engineer:  { name: "AIエンジニア", sub: "LLMアプリ、モデル、パイプラインの開発と提供" },
+    scientist: { name: "データサイエンティスト", sub: "モデリング、実験、統計分析" },
+    analyst:   { name: "データアナリスト", sub: "ダッシュボード、レポーティング、ビジネスインサイト" },
+    pm:        { name: "プロダクトマネージャー", sub: "プロダクト戦略、ロードマップ、ディスカバリーとデリバリー" }
+  },
+  verdicts: [
+    { min: 85, t: "強いマッチ", s: "この履歴書は求人の言葉で語れています。書き直しではなく、仕上げと調整に集中しましょう。" },
+    { min: 70, t: "良い土台", s: "重なりは十分です。下のギャップを埋めれば上位グループに入れます。" },
+    { min: 55, t: "部分的なマッチ", s: "実在する土台はありますが、求人が求めるいくつかがまだ証明できていません。" },
+    { min: 40, t: "大きなギャップ", s: "求人票と履歴書が別の話をしています。修正リストを上から順に進めましょう。" },
+    { min: 0,  t: "現時点では弱いマッチ", s: "落胆しないでください：下のギャップの多くは表現と証拠の問題で、修正可能です。" }
+  ],
+  bars: { keywords: "キーワードマッチ", impact: "定量的なインパクト", verbs: "強いアクション動詞", experience: "経験の適合度", structure: "構造と書式" },
+  barNotes: {
+    keywords: function(p, t){ return "求人が名指しする " + t + " 件のスキルのうち、履歴書がカバーしているのは " + p + " 件。全体の35%。"; },
+    impact: function(a, b){ return "箇条書き " + b + " 件中 " + a + " 件に数字、%、金額、規模が含まれます。全体の20%。"; },
+    verbs: function(a, b){ return "箇条書き " + b + " 件中 " + a + " 件が強いアクション動詞で始まります。全体の15%。"; },
+    experience: function(){ return "経験年数と明記要件（学位、資格）と求人の要求との比較。全体の15%。"; },
+    structure: function(a, b){ return "構造チェック " + b + " 件中 " + a + " 件に合格 — 連絡先、セクション、長さ。全体の15%。"; }
+  },
+  stats: { words: "履歴書の語数", bullets: "箇条書き数", quantified: "数字あり", verbLed: "動詞で開始" },
+  explainersTitle: "各数値の意味",
+  noPresent: "重なるスキルはまだ見つかりません — 下の修正リストが出発点です。",
+  noMissing: "不足なし — 求人が名指しするすべてのスキルが履歴書にあります。",
+  noExtra: "この求人のリスト以外に、職種ファミリーのスキルは検出されませんでした。",
+  gaps: {
+    yearsOk: function(jd, r){ return "経験年数は問題なさそうです：求人は約" + jd + "年を要求し、履歴書は約" + r + "年を証明しています。"; },
+    yearsShort: function(jd, r){ return "経験ギャップ：求人は約" + jd + "年を要求しますが、履歴書が証明できるのは約" + r + "年です。時間ではなく範囲 — チーム規模、予算、ユーザー数、担当地域 — で補いましょう。"; },
+    yearsNone: "明確な日付や「経験年数」の記載が見つかりません。採用担当者はここを素早く確認します — タイムラインを一目で分かるようにしましょう。",
+    jdNoYears: "この求人票には経験年数の要件が記載されていないため、この項目は採点されていません。",
+    degreeOk: function(d){ return "学歴は一致：求人が求める" + d + "が履歴書に示されています。"; },
+    degreeGap: function(d){ return "学歴ギャップ：求人は" + d + "（または同等）を求めています。持っていない場合は、同等の経験と資格を前面に出し、「同等の経験」と明記しましょう。"; },
+    certGap: function(c){ return "求人に名前があるのに履歴書にない資格：" + c + "。取得中の場合は「取得中」と書く — 多くのスクリーナーはそれも評価します。"; },
+    certOk: function(c){ return "資格カバー済み：" + c + "。"; },
+    seniority: "求人票はシニアレベルの言葉（lead、senior、principal）を使っています。肩書きと担当範囲の表現がそのレベルに合っているか確認を — さもないと1つ下のレベルに分類されます。",
+    domain: function(d){ return "業界シグナル：求人票は " + d + " に言及しています。近い経験がある場合は、サマリーで業界名を明記しましょう。"; }
+  },
+  fmt: {
+    emailOk: "メールアドレスあり。", emailNo: "メールアドレスが見つかりません — 最上部に追加してください。ATSパーサーによっては必須です。",
+    phoneOk: "電話番号あり。", phoneNo: "電話番号が見つかりません。求人に別段の指示がなければ追加しましょう。",
+    linkedinOk: "LinkedIn（またはポートフォリオ）リンクあり。", linkedinNo: "LinkedIn / ポートフォリオのリンクがありません。AI・データ職では、LinkedInやGitHubのリンクが人の目による審査で明らかに役立ちます。",
+    sectionsOk: function(n){ return "検出された主要セクション：" + n + "。"; },
+    sectionsNo: function(n){ return "不足している標準セクション：" + n + "。ATSパーサーは「Experience」「Education」「Skills」のような素直な見出しを探します。"; },
+    lenOk: function(w){ return "長さは健全な範囲です（" + w + "語 ≈ 1〜2ページ）。"; },
+    lenShort: function(w){ return w + "語とかなり短めです。約350語未満は通常、簡潔なのではなく実績が不足しているサインです。"; },
+    lenLong: function(w){ return w + "語と長めです。約1,000語を超えたら、最も古く関連性の低い職歴から削りましょう — 採用担当者は読み込むのではなく流し読みします。"; },
+    datesOk: "勤務日程が見えます。", datesNo: "明確な勤務日程が見つかりません。年月範囲を追加しましょう — 説明のないタイムラインは空白期間に読まれます。",
+    bulletsFew: "箇条書きが非常に少ないです。実績は段落より箇条書きの方がはるかにスキャンしやすくなります。"
+  },
+  impact: {
+    summary: function(q, b, v){ return "箇条書き " + b + " 件のうち、定量的な成果を含むものが " + q + " 件、強いアクション動詞で始まるものが " + v + " 件です。"; },
+    strong: "証拠の文化が強い：ほとんどの箇条書きに数字があります。この調子で — 「タスクをした」と「成果を出した」を分けるのはこれです。",
+    mid: "証拠はまだら模様です。このレポート全体で最速のアップグレード：数字のない箇条書きに数字 — %、削減時間、ユーザー数、売上、規模 — を追加することです。",
+    weak: "定量的な成果がほぼありません。数字のない箇条書きは「いただけ」と読まれ、「差を生んだ」とは読まれません。下のリライト欄の各項目が候補です。",
+    verbTip: "「Responsible for」「Worked on」「Helped」で始まる箇条書きは自分を過小評価します。実際にしたことを名指す動詞で始めましょう：built、shipped、cut、grew、automated。",
+    noBullets: "箇条書きが検出されませんでした。段落形式なら、実績を箇条書きに変換しましょう — 各項目は動詞で始まり、成果で終わります。"
+  },
+  fixes: {
+    kwHigh: function(list){ return { t: "本当に持っている不足コアスキルを追加", d: "どこにも記載なし：" + list + "。使ったことがあれば — サイドプロジェクトでも — スキル欄に明記し、箇条書き1件で裏付けましょう。面接で語れないスキルは絶対に書かないでください。" }; },
+    kwMed: function(list){ return { t: "残りの不足キーワードを織り込む", d: "まだ不在：" + list + "。キーワードの羅列ではなく、真実である職務経歴の箇条書きの中に織り込みましょう。" }; },
+    quant: function(n, b){ return { t: "成果を定量化する", d: "箇条書き " + b + " 件中、数字があるのは " + n + " 件だけです。残りに規模を加えましょう：%改善、削減時間、チーム人数、ユーザー数、データ量、売上。自信のある推定でも構いません — 不確かなら「約」と付けましょう。" }; },
+    verbs: function(){ return { t: "弱い箇条書きの書き出しを置き換える", d: "「Responsible for / Worked on / Helped」を、仕事を主張する動詞に：designed、shipped、automated、reduced、launched。あなたの具体的な箇条書きはリライト欄をご覧ください。" }; },
+    years: function(jd, r){ return { t: "紙の上で経験年数のギャップを縮める", d: "求人は約" + jd + "年、履歴書は約" + r + "年を証明。年数は増やせませんが密度は増やせます：より大きな担当範囲、シニアな責務、そしてサマリーの1行目で関連経験の総量を明確に枠付けましょう。" }; },
+    sections: function(n){ return { t: "不足している標準セクションを追加", d: "未検出：" + n + "。パーサーが正しく分類できるよう、そのままの素直な見出しを使いましょう。" }; },
+    contact: function(){ return { t: "連絡先ブロックを完成させる", d: "メール、電話、LinkedIn/ポートフォリオのリンクは最上部に。連絡先の欠落は、最も安上がりな落選理由です。" }; },
+    lengthShort: function(){ return { t: "薄い職歴項目を厚くする", d: "このレベルにしては履歴書が短めです。職務ごとに実績の箇条書きを2〜3件 — プロジェクト、規模、成果 — 追加してから、職歴を増やしましょう。" }; },
+    lengthLong: function(){ return { t: "2ページに削る", d: "約10年以上前の職歴は各1行に圧縮し、今は使わないスキルを落としましょう。完全さより密度です。" }; },
+    degree: function(d){ return { t: "学位要件に正面から答える", d: "求人は" + d + "を求めています。異なる場合は学歴を隠さず正規の位置に置き、資格＋経験にサマリーの1行目で主張させましょう。" }; },
+    summary: function(){ return { t: "2〜3行のプロフェッショナルサマリーを追加", d: "職種名＋年数＋求人に関連する最強の実績2つで始めましょう。スクリーナーは約7秒で判断します；サマリーこそ実際に読まれる部分です。" }; },
+    tailoring: function(role){ return { t: "求人票自身の言葉を映す", d: "求人票と同義語で食い違う場合は、求人票側の表現を優先しましょう — 特に上記の " + role + " スキルで。意味は同じでもマッチが良くなります。" }; },
+    impactLabel: "インパクト"
+  },
+  rw: {
+    before: "変更前", after: "リライト案", copy: "リライトをコピー", copied: "コピーしました ✓",
+    whyWeak: "理由：原文は責務であって成果ではありません。リライトは強い動詞で始め、測定可能な成果を加えています。",
+    whyNoNum: "理由：動詞は良いのですが規模がありません。括弧内の数字があなたの実績値を入れる場所です — 送信前に必ず置き換えてください。",
+    noneTitle: "弱い箇条書きは見つかりませんでした",
+    none: "箇条書きはすでに動詞で始まり数字も入っています。素晴らしい — 上のキーワードギャップにエネルギーを注ぎましょう。"
+  },
+  report: {
+    header: "AI 履歴書ヘルスチェック — レポート",
+    role: "目標職種", score: "総合マッチスコア",
+    present: "示せているスキル", missing: "不足キーワード", extra: "追加の強み",
+    gapsH: "経験と要件", fmtH: "長さと書式", impactH: "アクション動詞と数字",
+    fixH: "修正チェックリスト（優先順）", rwH: "箇条書きリライト案",
+    note: "注意：キーワードマッチはガイドであり、本物のATSではありません。本当に持っているスキルだけを追加してください。",
+    none: "（なし）"
+  },
+  copiedReport: "レポートをコピーしました ✓", copyFail: "コピー失敗 — ダウンロードをお使いください"
+};
+
+/* ---------------- Skill dictionary ---------------- */
+/* [canonical name, aliases (lowercase, matched as whole phrases)] */
+var SKILLS = [
+  ["Python", ["python"]], ["SQL", ["sql"]], ["R", [" r language", "r programming"]],
+  ["Machine Learning", ["machine learning", "ml model", "ml models"]],
+  ["Deep Learning", ["deep learning"]], ["LLM", ["llm", "llms", "large language model", "large language models"]],
+  ["Generative AI", ["generative ai", "genai", "gen ai"]],
+  ["RAG", ["rag", "retrieval-augmented", "retrieval augmented"]],
+  ["Prompt Engineering", ["prompt engineering", "prompt design", "prompting"]],
+  ["Agentic AI", ["agentic ai", "ai agent", "ai agents", "agent framework"]],
+  ["LangChain", ["langchain"]], ["LlamaIndex", ["llamaindex"]],
+  ["Vector Databases", ["vector database", "vector databases", "pinecone", "weaviate", "faiss", "chromadb", "milvus", "pgvector"]],
+  ["Fine-tuning", ["fine-tuning", "fine tuning", "finetuning", "lora", "peft"]],
+  ["NLP", ["nlp", "natural language processing"]],
+  ["Computer Vision", ["computer vision"]],
+  ["PyTorch", ["pytorch"]], ["TensorFlow", ["tensorflow", "keras"]],
+  ["scikit-learn", ["scikit-learn", "sklearn"]],
+  ["Pandas", ["pandas"]], ["NumPy", ["numpy"]],
+  ["Statistics", ["statistics", "statistical"]], ["A/B Testing", ["a/b test", "a/b testing", "ab testing", "experimentation"]],
+  ["Hypothesis Testing", ["hypothesis test"]],
+  ["Forecasting", ["forecasting", "time series"]],
+  ["Data Visualization", ["data visualization", "data visualisation"]],
+  ["Tableau", ["tableau"]], ["Power BI", ["power bi", "powerbi"]], ["Looker", ["looker", "looker studio"]],
+  ["Excel", ["excel", "spreadsheet", "spreadsheets"]],
+  ["ETL", ["etl", "elt", "data pipeline", "data pipelines"]],
+  ["Spark", ["spark", "pyspark"]], ["Airflow", ["airflow"]], ["dbt", ["dbt"]],
+  ["Data Warehousing", ["data warehouse", "data warehousing", "snowflake", "bigquery", "redshift", "databricks"]],
+  ["Data Modeling", ["data model", "data modeling", "data modelling"]],
+  ["AWS", ["aws", "amazon web services", "sagemaker", "bedrock"]],
+  ["Azure", ["azure", "azure openai"]],
+  ["GCP", ["gcp", "google cloud", "vertex ai"]],
+  ["Cloud Architecture", ["cloud architecture", "cloud architect"]],
+  ["Solution Architecture", ["solution architecture", "solutions architecture", "solution architect", "solutions architect"]],
+  ["System Design", ["system design"]],
+  ["API Design", ["api design", "rest api", "restful", "api development", "apis", "api"]],
+  ["Microservices", ["microservices", "micro-services"]],
+  ["Docker", ["docker", "container", "containers", "containerization"]],
+  ["Kubernetes", ["kubernetes", "k8s"]],
+  ["MLOps", ["mlops", "model deployment", "ml pipeline", "ml pipelines"]],
+  ["CI/CD", ["ci/cd", "continuous integration", "continuous deployment"]],
+  ["Git", ["git", "github", "gitlab"]],
+  ["Java", ["java"]], ["JavaScript", ["javascript", "js", "node.js", "nodejs"]],
+  ["TypeScript", ["typescript"]], ["React", ["react"]],
+  ["Stakeholder Management", ["stakeholder management", "stakeholder engagement", "stakeholders"]],
+  ["Requirements Gathering", ["requirements gathering", "requirement gathering", "business requirements"]],
+  ["Business Analysis", ["business analysis", "business analyst"]],
+  ["Presales", ["presales", "pre-sales", "pre sales"]],
+  ["Proof of Concept", ["proof of concept", "poc", "pocs", "prototype", "prototyping"]],
+  ["Cost Optimization", ["cost optimization", "cost optimisation", "cost reduction"]],
+  ["Security & Governance", ["governance", "security compliance", "data governance", "responsible ai", "ai governance"]],
+  ["Agile", ["agile"]], ["Scrum", ["scrum"]],
+  ["Product Strategy", ["product strategy"]], ["Roadmapping", ["roadmap", "roadmaps", "roadmapping"]],
+  ["User Research", ["user research", "customer research", "user interviews"]],
+  ["Product Discovery", ["product discovery", "discovery"]],
+  ["Prioritization", ["prioritization", "prioritisation", "prioritize", "prioritise"]],
+  ["Go-to-Market", ["go-to-market", "go to market", "gtm"]],
+  ["KPI & Metrics", ["kpi", "kpis", "metrics", "okr", "okrs"]],
+  ["Figma", ["figma"]], ["Jira", ["jira"]],
+  ["Wireframing", ["wireframe", "wireframes", "wireframing"]],
+  ["Communication", ["communication", "presentation", "presentations", "presenting"]],
+  ["Leadership", ["leadership", "led a team", "team lead", "mentoring", "mentored"]],
+  ["Cross-functional Collaboration", ["cross-functional", "cross functional"]],
+  ["Dashboarding", ["dashboard", "dashboards", "dashboarding"]],
+  ["Reporting", ["reporting", "reports", "report automation"]],
+  ["Hugging Face", ["hugging face", "huggingface"]],
+  ["OpenAI API", ["openai", "gpt-4", "gpt4", "chatgpt"]],
+  ["Model Evaluation", ["model evaluation", "evaluation framework", "evals", "benchmarking"]],
+  ["Data Analysis", ["data analysis", "data analytics", "analytics"]],
+  ["Jupyter", ["jupyter"]]
+];
+var SKILL_NAMES = SKILLS.map(function(s){ return s[0]; });
+
+var ROLE_CORE = {
+  architect: ["LLM","Generative AI","RAG","Solution Architecture","Cloud Architecture","AWS","Azure","System Design","API Design","Stakeholder Management","Python","Vector Databases","Prompt Engineering","Agentic AI","Proof of Concept","Security & Governance","Presales","Cost Optimization","MLOps","Model Evaluation"],
+  engineer:  ["Python","LLM","RAG","LangChain","PyTorch","Docker","Kubernetes","API Design","Vector Databases","Fine-tuning","MLOps","Git","SQL","AWS","Prompt Engineering","Agentic AI","Model Evaluation","Hugging Face","OpenAI API","CI/CD"],
+  scientist: ["Python","SQL","Machine Learning","Statistics","Pandas","scikit-learn","PyTorch","A/B Testing","Data Visualization","NLP","Forecasting","Hypothesis Testing","Deep Learning","Jupyter","Data Analysis","Model Evaluation"],
+  analyst:   ["SQL","Excel","Tableau","Power BI","Python","Data Visualization","Dashboarding","Reporting","Data Analysis","Statistics","A/B Testing","ETL","Stakeholder Management","Communication","Data Modeling"],
+  pm:        ["Product Strategy","Roadmapping","User Research","Stakeholder Management","Agile","Scrum","Prioritization","KPI & Metrics","A/B Testing","Go-to-Market","Product Discovery","SQL","Figma","Jira","Wireframing","Communication","Cross-functional Collaboration"]
+};
+
+var STRONG_VERBS = ["accelerated","achieved","architected","automated","boosted","built","championed","consolidated","created","cut","delivered","deployed","designed","developed","drove","engineered","established","expanded","generated","grew","implemented","improved","increased","initiated","launched","led","migrated","modeled","modelled","negotiated","optimized","optimised","orchestrated","owned","partnered","pioneered","presented","prototyped","reduced","redesigned","released","revamped","saved","scaled","shipped","simplified","spearheaded","streamlined","trained","transformed","won"];
+var WEAK_OPENERS = ["responsible for","was responsible","worked on","worked with","helped","assisted","in charge of","tasked with","duties included","handled","did","made","used","utilized","utilised","participated in","involved in"];
+
+var CERTS = ["AWS Certified","Azure Certified","Google Cloud Certified","Professional Cloud Architect","PMP","Certified Scrum","CKA","TensorFlow Developer","Databricks Certified","Snowflake","CISSP","TOGAF"];
+var DEGREE_NAMES = { 3: "PhD", 2: "Master's degree", 1: "Bachelor's degree" };
+var INDUSTRIES = ["fintech","finance","banking","healthcare","health","retail","e-commerce","ecommerce","manufacturing","logistics","insurance","telecom","energy","SaaS","education"];
+
+/* ---------------- Samples ---------------- */
+var SAMPLES = {
+  architect: {
+    role: "architect",
+    resume:
+"Cindy Mao\nBusiness Analyst | Aspiring AI Solution Architect\ncindy.mao@example.com | +65 8123 4567 | linkedin.com/in/cindymao-example | Singapore\n\nPROFESSIONAL SUMMARY\nBusiness Analyst with experience in a global technology company and an MSc in Data Science from the National University of Singapore. I design AI workflows and LLM applications that help commercial teams plan, forecast and decide faster.\n\nEXPERIENCE\nBusiness Analyst — Global Technology Company, Singapore (Aug 2026 – Present)\n• Built a GenAI reporting assistant that turns engineers' technical notes into manager-ready summaries, saving each team about 6 hours per week\n• Designed prompt workflows and an evaluation rubric for an internal knowledge coach used by regional sales teams\n• Automated a weekly forecast and funnel report in Python and Power BI, cutting preparation time from 2 days to 3 hours\n• Responsible for stakeholder meetings and presenting AI project updates to regional leadership\n• Worked on an agentic AI prototype that drafts follow-up actions from meeting notes\n• Partnered with data engineering to clean and document APJ sales data pipelines in SQL\n\nData Science Intern — Same Company (Jan 2026 – Jun 2026)\n• Built an ESG scoring model in Python (scikit-learn) covering 200+ companies\n• Created dashboards in Tableau for discount and conversion analysis\n\nSKILLS\nPython, SQL, LLM applications, Prompt Engineering, Generative AI, Power BI, Tableau, scikit-learn, Data Analysis, Stakeholder Management, Business Analysis, Git\n\nEDUCATION\nMSc Data Science — National University of Singapore (2026)\nBSc Statistics (2019)",
+    jd:
+"AI Solution Architect — Cloud & AI Consultancy, Singapore\n\nWe are looking for an AI Solution Architect to design and deliver enterprise GenAI solutions for clients across APJ.\n\nResponsibilities:\n• Lead solution architecture for LLM and RAG applications on Azure and AWS\n• Run discovery workshops and presales engagements with enterprise stakeholders\n• Build proofs of concept and guide MLOps deployment with engineering teams\n• Design vector database and retrieval architectures with strong security and governance\n• Advise clients on cost optimization and responsible AI practices\n\nRequirements:\n• 5+ years of experience in solution architecture, data or AI roles\n• Deep experience with LLM applications, RAG, prompt engineering and agentic AI\n• Hands-on Python and API design; cloud architecture on Azure and/or AWS\n• Experience with vector databases, model evaluation and MLOps\n• Excellent stakeholder management and presentation skills\n• Master's degree in a quantitative field preferred; Azure or AWS architect certification is a plus"
+  },
+  scientist: {
+    role: "scientist",
+    resume:
+"Daniel Wu\nd.wu@example.com | Taipei, Taiwan\n\nSUMMARY\nData analyst who likes data and wants to become a data scientist. Skilled with Python and Excel.\n\nWORK EXPERIENCE\nData Analyst — E-commerce Company (2023 – 2025)\n• Responsible for weekly sales reports\n• Worked on dashboards for the marketing team\n• Helped with data cleaning tasks\n• Did analysis on customer data using Python\n• Assisted senior analysts with ad hoc requests\n• Made charts for presentations\n\nJunior Analyst — Retail Company (2022 – 2023)\n• Responsible for maintaining Excel spreadsheets\n• Worked on monthly reporting\n\nSKILLS\nPython, Excel, SQL, Tableau\n\nEDUCATION\nBachelor's degree in Business Administration (2022)",
+    jd:
+"Data Scientist — E-commerce Platform, Taipei\n\nResponsibilities:\n• Build machine learning models for recommendation, pricing and churn prediction\n• Design and analyse A/B tests and experimentation programmes\n• Partner with product and engineering on data pipelines and feature engineering\n• Communicate statistical findings to stakeholders through clear data visualization\n\nRequirements:\n• 3+ years of experience in data science or machine learning roles\n• Strong Python and SQL; experience with pandas and scikit-learn required\n• Solid statistics foundation, including hypothesis testing and A/B testing\n• Experience with PyTorch or TensorFlow is a strong plus\n• Master's degree in Statistics, Computer Science or a related field preferred\n• Experience with forecasting and NLP is a plus"
+  }
+};
+
+/* ---------------- Helpers ---------------- */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function t(){ return L[LANG]; }
+function wordCount(text){
+  var cjk = (text.match(/[぀-ヿ㐀-鿿豈-﫿]/g) || []).length;
+  var words = (text.replace(/[぀-ヿ㐀-鿿豈-﫿]/g, " ").match(/[A-Za-z0-9][A-Za-z0-9'\-\.]*/g) || []).length;
+  return words + cjk;
+}
+function containsPhrase(textLower, alias){
+  var a = alias.toLowerCase();
+  var idx = textLower.indexOf(a);
+  while (idx !== -1){
+    var before = idx === 0 ? " " : textLower.charAt(idx - 1);
+    var after = idx + a.length >= textLower.length ? " " : textLower.charAt(idx + a.length);
+    if (!/[a-z0-9]/.test(before) && !/[a-z0-9]/.test(after)) return true;
+    idx = textLower.indexOf(a, idx + 1);
+  }
+  return false;
+}
+function skillsIn(text){
+  var low = " " + text.toLowerCase() + " ";
+  var found = [];
+  SKILLS.forEach(function(s){
+    for (var i = 0; i < s[1].length; i++){
+      if (containsPhrase(low, s[1][i])){ found.push(s[0]); return; }
+    }
+  });
+  return found;
+}
+function getBullets(text){
+  var lines = text.split(/\n/), out = [];
+  lines.forEach(function(ln){
+    var s = ln.trim();
+    if (/^[•\-\*▪◦·–—]\s+/.test(s) && s.length > 12) out.push(s.replace(/^[•\-\*▪◦·–—]\s+/, ""));
+  });
+  if (out.length < 3){
+    lines.forEach(function(ln){
+      var s = ln.trim();
+      if (s.length > 40 && s.length < 300 && !/^(education|skills|experience|summary|work|professional|学|經|経)/i.test(s) && /[a-z]/i.test(s)) {
+        if (out.indexOf(s) === -1 && !/@/.test(s)) out.push(s);
+      }
+    });
+  }
+  return out.slice(0, 40);
+}
+function bulletHasNumber(b){
+  return /(\d+\s?%|\$\s?\d|\d+\s?(hours?|hrs|days?|weeks?|months?|users?|customers?|clients?|teams?|people|members?|models?|companies|records?|rows?|x\b|million|k\b)|\d{2,})/i.test(b);
+}
+function bulletFirstWord(b){
+  var m = b.replace(/^[^A-Za-z]+/, "").match(/^([A-Za-z]+)/);
+  return m ? m[1].toLowerCase() : "";
+}
+function bulletWeakOpener(b){
+  var low = b.toLowerCase();
+  for (var i = 0; i < WEAK_OPENERS.length; i++){ if (low.indexOf(WEAK_OPENERS[i]) === 0) return WEAK_OPENERS[i]; }
+  return null;
+}
+function parseYearsRequired(jd){
+  var m = jd.match(/(\d{1,2})\s*\+?\s*(?:years?|yrs?)\s*(?:of\s+)?(?:experience|exp\b)/i) || jd.match(/(\d{1,2})\s*\+?\s*(?:years?|yrs?)/i);
+  return m ? parseInt(m[1], 10) : null;
+}
+function parseYearsResume(resume){
+  var best = 0;
+  var re = /(\d{1,2})\s*\+?\s*(?:years?|yrs?)/gi, m;
+  while ((m = re.exec(resume)) !== null){ best = Math.max(best, parseInt(m[1], 10)); }
+  if (best > 0) return best;
+  var years = [], ym;
+  var yre = /(?:19|20)\d{2}/g;
+  while ((ym = yre.exec(resume)) !== null){ years.push(parseInt(ym[0], 10)); }
+  if (years.length >= 2){
+    var span = Math.max.apply(null, years) - Math.min.apply(null, years);
+    if (span > 0 && span <= 45) return span;
+  }
+  return 0;
+}
+function degreeLevel(text){
+  var low = text.toLowerCase();
+  if (/ph\.?d|doctorate|博士/.test(low)) return 3;
+  if (/master|m\.?sc|m\.?s\.|mba|碩士|修士/.test(low)) return 2;
+  if (/bachelor|b\.?sc|b\.?s\.|b\.?a\.|學士|学士/.test(low)) return 1;
+  return 0;
+}
+function hasSection(text, patterns){
+  var low = text.toLowerCase();
+  return patterns.some(function(p){ return low.indexOf(p) !== -1; });
+}
+
+/* ---------------- Analysis ---------------- */
+var lastReport = null;
+
+function analyze(resume, jd, roleId){
+  var pk = t();
+  var resumeSkills = skillsIn(resume);
+  var jdSkills = skillsIn(jd);
+  var core = ROLE_CORE[roleId] || [];
+  /* Target set: skills the JD names; if the JD is thin, fall back to role core skills */
+  var target = jdSkills.slice();
+  if (target.length < 6){
+    core.forEach(function(c){ if (target.indexOf(c) === -1) target.push(c); });
+  }
+  var present = target.filter(function(s){ return resumeSkills.indexOf(s) !== -1; });
+  var missing = target.filter(function(s){ return resumeSkills.indexOf(s) === -1; });
+  var extra = resumeSkills.filter(function(s){ return core.indexOf(s) !== -1 && target.indexOf(s) === -1; });
+
+  /* Impact */
+  var bullets = getBullets(resume);
+  var qCount = 0, vCount = 0;
+  bullets.forEach(function(b){
+    if (bulletHasNumber(b)) qCount++;
+    if (STRONG_VERBS.indexOf(bulletFirstWord(b)) !== -1) vCount++;
+  });
+  var bTotal = Math.max(bullets.length, 1);
+  var impactScore = bullets.length ? Math.round(100 * qCount / bTotal) : 0;
+  var verbScore = bullets.length ? Math.round(100 * vCount / bTotal) : 0;
+
+  /* Experience */
+  var jdYears = parseYearsRequired(jd);
+  var rYears = parseYearsResume(resume);
+  var jdDeg = degreeLevel(jd), rDeg = degreeLevel(resume);
+  var expParts = [], expHits = 0, expChecks = 0;
+  if (jdYears !== null){
+    expChecks++;
+    if (rYears >= jdYears) expHits++; else if (rYears >= jdYears - 1) expHits += 0.5;
+  }
+  if (jdDeg > 0){
+    expChecks++;
+    if (rDeg >= jdDeg) expHits++; else if (rDeg === jdDeg - 1) expHits += 0.25;
+  }
+  var jdCerts = CERTS.filter(function(c){ return jd.toLowerCase().indexOf(c.toLowerCase()) !== -1; });
+  jdCerts.forEach(function(){ expChecks++; });
+  jdCerts.forEach(function(c){ if (resume.toLowerCase().indexOf(c.toLowerCase()) !== -1) expHits++; });
+  if (expChecks === 0){ expChecks = 1; expHits = 0.75; }
+  var expScore = Math.round(100 * expHits / expChecks);
+
+  /* Gaps list */
+  var gaps = [];
+  if (jdYears !== null){
+    if (rYears === 0) gaps.push({ ok: false, text: pk.gaps.yearsNone });
+    else if (rYears >= jdYears) gaps.push({ ok: true, text: pk.gaps.yearsOk(jdYears, rYears) });
+    else gaps.push({ ok: false, text: pk.gaps.yearsShort(jdYears, rYears) });
+  } else gaps.push({ ok: true, text: pk.gaps.jdNoYears });
+  if (jdDeg > 0){
+    if (rDeg >= jdDeg) gaps.push({ ok: true, text: pk.gaps.degreeOk(DEGREE_NAMES[jdDeg]) });
+    else gaps.push({ ok: false, text: pk.gaps.degreeGap(DEGREE_NAMES[jdDeg]) });
+  }
+  jdCerts.forEach(function(c){
+    if (resume.toLowerCase().indexOf(c.toLowerCase()) !== -1) gaps.push({ ok: true, text: pk.gaps.certOk(c) });
+    else gaps.push({ ok: false, text: pk.gaps.certGap(c) });
+  });
+  if (/\b(senior|lead|principal|staff)\b/i.test(jd) && !/\b(senior|lead|principal|staff|head)\b/i.test(resume)){
+    gaps.push({ ok: false, text: pk.gaps.seniority });
+  }
+  INDUSTRIES.forEach(function(ind){
+    if (jd.toLowerCase().indexOf(ind) !== -1 && resume.toLowerCase().indexOf(ind) === -1){
+      gaps.push({ ok: false, text: pk.gaps.domain(ind) });
+    }
+  });
+  if (!gaps.some(function(g){ return !g.ok; })) gaps.push({ ok: true, text: pk.gaps.yearsOk(jdYears || "—", rYears || "—") === "" ? "" : gaps[0].text });
+
+  /* Format checks */
+  var words = wordCount(resume);
+  var fmt = [];
+  var hasEmail = /[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/.test(resume);
+  fmt.push({ ok: hasEmail, text: hasEmail ? pk.fmt.emailOk : pk.fmt.emailNo });
+  var hasPhone = /(\+?\d[\d\s\-()]{7,}\d)/.test(resume);
+  fmt.push({ ok: hasPhone, text: hasPhone ? pk.fmt.phoneOk : pk.fmt.phoneNo });
+  var hasLink = /(linkedin\.com|github\.com|portfolio|個人網站|ポートフォリオ)/i.test(resume);
+  fmt.push({ ok: hasLink, text: hasLink ? pk.fmt.linkedinOk : pk.fmt.linkedinNo });
+  var sectionDefs = [
+    { name: "Summary", pats: ["summary", "profile", "about", "摘要", "概要", "サマリー"] },
+    { name: "Experience", pats: ["experience", "employment", "work history", "經歷", "経験", "職務経歴"] },
+    { name: "Skills", pats: ["skills", "技能", "スキル"] },
+    { name: "Education", pats: ["education", "學歷", "学歴"] }
+  ];
+  var foundSections = [], missingSections = [];
+  sectionDefs.forEach(function(sd){
+    if (hasSection(resume, sd.pats)) foundSections.push(sd.name); else missingSections.push(sd.name);
+  });
+  if (missingSections.length === 0) fmt.push({ ok: true, text: pk.fmt.sectionsOk(foundSections.join(", ")) });
+  else fmt.push({ ok: false, text: pk.fmt.sectionsNo(missingSections.join(", ")) });
+  var lenOk = words >= 350 && words <= 1000;
+  fmt.push({ ok: lenOk, text: words < 350 ? pk.fmt.lenShort(words) : (words > 1000 ? pk.fmt.lenLong(words) : pk.fmt.lenOk(words)) });
+  var hasDates = /(?:19|20)\d{2}/.test(resume);
+  fmt.push({ ok: hasDates, text: hasDates ? pk.fmt.datesOk : pk.fmt.datesNo });
+  if (bullets.length < 4) fmt.push({ ok: false, text: pk.fmt.bulletsFew });
+  var structHits = fmt.filter(function(f){ return f.ok; }).length;
+  var structScore = Math.round(100 * structHits / fmt.length);
+
+  var kwScore = target.length ? Math.round(100 * present.length / target.length) : 0;
+  var overall = Math.round(kwScore * 0.35 + impactScore * 0.20 + verbScore * 0.15 + expScore * 0.15 + structScore * 0.15);
+
+  /* Impact lines */
+  var impactLines = [];
+  impactLines.push(pk.impact.summary(qCount, bullets.length, vCount));
+  if (bullets.length === 0) impactLines.push(pk.impact.noBullets);
+  else if (impactScore >= 70) impactLines.push(pk.impact.strong);
+  else if (impactScore >= 35) impactLines.push(pk.impact.mid);
+  else impactLines.push(pk.impact.weak);
+  if (bullets.length && vCount / bTotal < 0.6) impactLines.push(pk.impact.verbTip);
+
+  /* Fixes, ranked by impact points */
+  var fixes = [];
+  var coreMissing = missing.filter(function(s){ return core.indexOf(s) !== -1; });
+  var otherMissing = missing.filter(function(s){ return core.indexOf(s) === -1; });
+  if (coreMissing.length) { var f1 = pk.fixes.kwHigh(coreMissing.slice(0, 6).join(", ")); fixes.push({ prio: "high", pts: 90, t: f1.t, d: f1.d }); }
+  if (jdYears !== null && rYears > 0 && rYears < jdYears) { var f2 = pk.fixes.years(jdYears, rYears); fixes.push({ prio: "high", pts: 85, t: f2.t, d: f2.d }); }
+  if (bullets.length && qCount / bTotal < 0.5) { var f3 = pk.fixes.quant(qCount, bullets.length); fixes.push({ prio: "high", pts: 80, t: f3.t, d: f3.d }); }
+  if (jdDeg > 0 && rDeg < jdDeg) { var f4 = pk.fixes.degree(DEGREE_NAMES[jdDeg]); fixes.push({ prio: "med", pts: 62, t: f4.t, d: f4.d }); }
+  if (bullets.length && vCount / bTotal < 0.6) { var f5 = pk.fixes.verbs(); fixes.push({ prio: "med", pts: 60, t: f5.t, d: f5.d }); }
+  if (otherMissing.length) { var f6 = pk.fixes.kwMed(otherMissing.slice(0, 6).join(", ")); fixes.push({ prio: "med", pts: 55, t: f6.t, d: f6.d }); }
+  if (missingSections.length) { var f7 = pk.fixes.sections(missingSections.join(", ")); fixes.push({ prio: "med", pts: 50, t: f7.t, d: f7.d }); }
+  if (!hasEmail || !hasPhone || !hasLink) { var f8 = pk.fixes.contact(); fixes.push({ prio: "med", pts: 48, t: f8.t, d: f8.d }); }
+  if (foundSections.indexOf("Summary") === -1) { var f9 = pk.fixes.summary(); fixes.push({ prio: "low", pts: 35, t: f9.t, d: f9.d }); }
+  if (words < 350 && words > 0) { var f10 = pk.fixes.lengthShort(); fixes.push({ prio: "low", pts: 30, t: f10.t, d: f10.d }); }
+  if (words > 1000) { var f11 = pk.fixes.lengthLong(); fixes.push({ prio: "low", pts: 30, t: f11.t, d: f11.d }); }
+  var roleName = pk.roles[roleId].name;
+  if (missing.length) { var f12 = pk.fixes.tailoring(roleName); fixes.push({ prio: "low", pts: 25, t: f12.t, d: f12.d }); }
+  fixes.sort(function(a, b){ return b.pts - a.pts; });
+
+  /* Rewrites */
+  var rewrites = buildRewrites(bullets);
+
+  return {
+    roleId: roleId, overall: overall,
+    bars: [
+      { key: "keywords", score: kwScore, note: pk.barNotes.keywords(present.length, target.length) },
+      { key: "impact", score: impactScore, note: pk.barNotes.impact(qCount, bullets.length) },
+      { key: "verbs", score: verbScore, note: pk.barNotes.verbs(vCount, bullets.length) },
+      { key: "experience", score: expScore, note: pk.barNotes.experience() },
+      { key: "structure", score: structScore, note: pk.barNotes.structure(structHits, fmt.length) }
+    ],
+    stats: { words: words, bullets: bullets.length, quantified: qCount, verbLed: vCount },
+    present: present, missing: missing, extra: extra,
+    gaps: gaps.filter(function(g){ return g.text; }), fmt: fmt,
+    impactLines: impactLines, fixes: fixes, rewrites: rewrites
+  };
+}
+
+var REWRITE_VERBS = ["Built", "Delivered", "Automated", "Designed", "Shipped", "Improved", "Streamlined", "Launched"];
+function buildRewrites(bullets){
+  var pk = t();
+  var out = [];
+  var candidates = [];
+  bullets.forEach(function(b){
+    var weak = bulletWeakOpener(b);
+    var hasNum = bulletHasNumber(b);
+    if (weak) candidates.push({ b: b, kind: "weak", weak: weak });
+    else if (!hasNum && STRONG_VERBS.indexOf(bulletFirstWord(b)) !== -1) candidates.push({ b: b, kind: "nonum" });
+  });
+  candidates.slice(0, 4).forEach(function(c, i){
+    var text = c.b, after;
+    if (c.kind === "weak"){
+      var rest = text.slice(c.weak.length).replace(/^\s*(for|of|with)?\s*/i, "").trim();
+      rest = rest.charAt(0).toUpperCase() + rest.slice(1);
+      var verb = REWRITE_VERBS[i % REWRITE_VERBS.length];
+      var coreText = rest.replace(/^[A-Z][a-z]+\s/, function(w){ return w.toLowerCase(); });
+      after = verb + " " + coreText.replace(/\.*$/, "") + ", delivering [measurable result — e.g. X% faster / Y hours saved per week / Z users reached].";
+      out.push({ before: text, after: after, why: pk.rw.whyWeak });
+    } else {
+      after = text.replace(/\.*$/, "") + " — [add your number: % improvement, hours saved, users or revenue impact].";
+      out.push({ before: text, after: after, why: pk.rw.whyNoNum });
+    }
+  });
+  return out;
+}
+
+/* ---------------- Rendering ---------------- */
+var selectedRole = "architect";
+
+function renderRoles(){
+  var pk = t();
+  var grid = $("roleGrid");
+  grid.innerHTML = "";
+  Object.keys(pk.roles).forEach(function(id){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "role-btn" + (id === selectedRole ? " selected" : "");
+    btn.setAttribute("aria-pressed", id === selectedRole ? "true" : "false");
+    btn.innerHTML = '<span class="r-title">' + esc(pk.roles[id].name) + '</span><span class="r-sub">' + esc(pk.roles[id].sub) + "</span>";
+    btn.addEventListener("click", function(){
+      selectedRole = id;
+      renderRoles();
+      if (lastReport) runAnalysis(false);
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function chipList(el, items, cls, emptyText){
+  if (!items.length){ el.innerHTML = '<span class="empty-note">' + esc(emptyText) + "</span>"; return; }
+  el.innerHTML = items.map(function(s){ return '<span class="chip ' + cls + '">' + esc(s) + "</span>"; }).join("");
+}
+function icon(ok){
+  return ok
+    ? '<span class="ic" style="color:var(--good)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>'
+    : '<span class="ic" style="color:var(--warn)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>';
+}
+
+function renderReport(rep){
+  var pk = t();
+  $("results").classList.add("show");
+  /* Ring */
+  var C = 464.96;
+  $("ringFg").style.strokeDashoffset = String(C * (1 - rep.overall / 100));
+  $("scoreNum").textContent = rep.overall;
+  var verdict = pk.verdicts[0];
+  pk.verdicts.forEach(function(v){ if (rep.overall >= v.min) verdict = v; });
+  /* verdicts sorted desc by min in packs; pick highest matching */
+  var best = pk.verdicts[pk.verdicts.length - 1];
+  for (var i = 0; i < pk.verdicts.length; i++){ if (rep.overall >= pk.verdicts[i].min){ best = pk.verdicts[i]; break; } }
+  $("scoreVerdict").textContent = best.t;
+  $("scoreVerdictSub").textContent = best.s;
+  /* Bars */
+  var barsHtml = "";
+  rep.bars.forEach(function(b){
+    var cls = b.score >= 70 ? "" : (b.score >= 45 ? " mid" : " low");
+    barsHtml += '<div class="bar-row"><span class="b-label">' + esc(pk.bars[b.key]) + '</span><div class="bar-track"><div class="bar-fill' + cls + '" data-w="' + b.score + '"></div></div><span class="bar-val">' + b.score + "</span></div>";
+    barsHtml += '<div class="bar-note">' + esc(b.note) + "</div>";
+  });
+  $("bars").innerHTML = barsHtml;
+  requestAnimationFrame(function(){
+    document.querySelectorAll(".bar-fill").forEach(function(el){ el.style.width = el.getAttribute("data-w") + "%"; });
+  });
+  /* Explainers */
+  $("scoreExplainers").innerHTML = rep.bars.map(function(b){
+    return "<li>" + icon(b.score >= 60) + "<span><strong>" + esc(pk.bars[b.key]) + " — " + b.score + "/100.</strong> " + esc(b.note) + "</span></li>";
+  }).join("");
+  /* Stats */
+  $("statStrip").innerHTML =
+    '<div class="stat"><strong>' + rep.stats.words + "</strong>" + esc(pk.stats.words) + "</div>" +
+    '<div class="stat"><strong>' + rep.stats.bullets + "</strong>" + esc(pk.stats.bullets) + "</div>" +
+    '<div class="stat"><strong>' + rep.stats.quantified + "</strong>" + esc(pk.stats.quantified) + "</div>" +
+    '<div class="stat"><strong>' + rep.stats.verbLed + "</strong>" + esc(pk.stats.verbLed) + "</div>";
+  /* Skills */
+  chipList($("presentChips"), rep.present, "present", pk.noPresent);
+  chipList($("missingChips"), rep.missing, "missing", pk.noMissing);
+  $("extraCard").style.display = rep.extra.length ? "" : "none";
+  chipList($("extraChips"), rep.extra, "extra", pk.noExtra);
+  /* Gaps + format */
+  $("gapList").innerHTML = rep.gaps.map(function(g){ return "<li>" + icon(g.ok) + "<span>" + esc(g.text) + "</span></li>"; }).join("");
+  $("formatList").innerHTML = rep.fmt.map(function(f){ return "<li>" + icon(f.ok) + "<span>" + esc(f.text) + "</span></li>"; }).join("");
+  /* Impact */
+  $("impactSummary").textContent = rep.impactLines[0] || "";
+  $("impactList").innerHTML = rep.impactLines.slice(1).map(function(s){ return "<li>" + icon(false) + "<span>" + esc(s) + "</span></li>"; }).join("");
+  /* Fixes */
+  if (rep.fixes.length){
+    $("fixList").innerHTML = rep.fixes.map(function(f){
+      var prioCls = f.prio === "high" ? "high" : (f.prio === "med" ? "med" : "low");
+      var prioLabel = LANG === "zh" ? (f.prio === "high" ? "高" : f.prio === "med" ? "中" : "低") : (LANG === "ja" ? (f.prio === "high" ? "高" : f.prio === "med" ? "中" : "低") : f.prio.toUpperCase());
+      return '<div class="fix-item"><span class="prio ' + prioCls + '">' + prioLabel + '</span><div><div class="f-title">' + esc(f.t) + ' <span class="fix-impact">· ' + esc(pk.fixes.impactLabel) + " " + f.pts + '</span></div><div class="f-desc">' + esc(f.d) + "</div></div></div>";
+    }).join("");
+  } else {
+    $("fixList").innerHTML = '<p class="empty-note">' + esc(pk.noMissing) + "</p>";
+  }
+  /* Rewrites */
+  var rw = $("rewriteList");
+  if (!rep.rewrites.length){
+    rw.innerHTML = '<p style="font-weight:700;margin:0 0 4px">' + esc(pk.rw.noneTitle) + '</p><p class="empty-note" style="font-style:normal">' + esc(pk.rw.none) + "</p>";
+  } else {
+    rw.innerHTML = "";
+    rep.rewrites.forEach(function(r){
+      var div = document.createElement("div");
+      div.className = "rewrite";
+      div.innerHTML =
+        '<div class="rw-label before">' + esc(pk.rw.before) + '</div><div class="rw-text rw-before">' + esc(r.before) + "</div>" +
+        '<div class="rw-label after">' + esc(pk.rw.after) + '</div><div class="rw-text rw-after">' + esc(r.after) + "</div>" +
+        '<div class="rw-why">' + icon(true) + "<span>" + esc(r.why) + "</span></div>";
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "copy-btn"; btn.textContent = pk.rw.copy;
+      btn.addEventListener("click", function(){
+        copyText(r.after, btn, pk.rw.copied);
+      });
+      div.appendChild(btn);
+      rw.appendChild(div);
+    });
+  }
+}
+
+function copyText(text, btn, doneLabel){
+  function done(){
+    if (btn){ var old = btn.textContent; btn.textContent = doneLabel; btn.classList.add("copied");
+      setTimeout(function(){ btn.textContent = old; btn.classList.remove("copied"); }, 1800); }
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+  } else fallback();
+  function fallback(){
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+}
+
+function reportText(rep){
+  var pk = t(), R = pk.report;
+  var lines = [];
+  lines.push(R.header);
+  lines.push(R.role + ": " + pk.roles[rep.roleId].name);
+  lines.push(R.score + ": " + rep.overall + "/100");
+  lines.push("");
+  rep.bars.forEach(function(b){ lines.push("• " + pk.bars[b.key] + ": " + b.score + "/100 — " + b.note); });
+  lines.push("");
+  lines.push(R.present + ": " + (rep.present.join(", ") || R.none));
+  lines.push(R.missing + ": " + (rep.missing.join(", ") || R.none));
+  lines.push(R.extra + ": " + (rep.extra.join(", ") || R.none));
+  lines.push("");
+  lines.push(R.gapsH + ":");
+  rep.gaps.forEach(function(g){ lines.push((g.ok ? "✓ " : "• ") + g.text); });
+  lines.push("");
+  lines.push(R.fmtH + ":");
+  rep.fmt.forEach(function(f){ lines.push((f.ok ? "✓ " : "• ") + f.text); });
+  lines.push("");
+  lines.push(R.impactH + ":");
+  rep.impactLines.forEach(function(s){ lines.push("• " + s); });
+  lines.push("");
+  lines.push(R.fixH + ":");
+  rep.fixes.forEach(function(f, i){ lines.push((i + 1) + ". [" + f.prio.toUpperCase() + "] " + f.t + " — " + f.d); });
+  lines.push("");
+  lines.push(R.rwH + ":");
+  if (!rep.rewrites.length) lines.push("• " + pk.rw.none);
+  rep.rewrites.forEach(function(r){ lines.push("BEFORE: " + r.before); lines.push("AFTER:  " + r.after); lines.push(""); });
+  lines.push(R.note);
+  return lines.join("\n");
+}
+
+/* ---------------- Wiring ---------------- */
+function updateCounts(){
+  var pk = t();
+  $("resumeCount").textContent = wordCount($("resumeInput").value) + " " + pk.words;
+  $("jdCount").textContent = wordCount($("jdInput").value) + " " + pk.words;
+}
+function runAnalysis(scroll){
+  var resume = $("resumeInput").value.trim();
+  var jd = $("jdInput").value.trim();
+  var ok = true;
+  $("resumeError").classList.toggle("show", !resume);
+  $("jdError").classList.toggle("show", !jd);
+  if (!resume || !jd) ok = false;
+  if (!ok) return;
+  lastReport = analyze(resume, jd, selectedRole);
+  renderReport(lastReport);
+  if (scroll !== false){
+    setTimeout(function(){ $("results").scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
+  }
+}
+function loadSample(key){
+  var s = SAMPLES[key];
+  selectedRole = s.role;
+  renderRoles();
+  $("resumeInput").value = s.resume;
+  $("jdInput").value = s.jd;
+  $("resumeError").classList.remove("show");
+  $("jdError").classList.remove("show");
+  updateCounts();
+  runAnalysis(true);
+}
+function applyLang(){
+  var pk = t();
+  document.documentElement.lang = LANG === "zh" ? "zh-Hant" : (LANG === "ja" ? "ja" : "en");
+  document.querySelectorAll("[data-i18n]").forEach(function(el){
+    var key = el.getAttribute("data-i18n");
+    if (pk[key]) el.innerHTML = pk[key];
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(function(el){
+    var key = el.getAttribute("data-i18n-ph");
+    if (pk[key]) el.setAttribute("placeholder", pk[key]);
+  });
+  document.querySelectorAll(".lang-switch button").forEach(function(b){
+    b.classList.toggle("active", b.getAttribute("data-lang") === LANG);
+  });
+  renderRoles();
+  updateCounts();
+  if (lastReport) runAnalysis(false);
+}
+
+$("analyzeBtn").addEventListener("click", function(){ runAnalysis(true); });
+$("sample1Btn").addEventListener("click", function(){ loadSample("architect"); });
+$("sample2Btn").addEventListener("click", function(){ loadSample("scientist"); });
+$("clearResume").addEventListener("click", function(){ $("resumeInput").value = ""; updateCounts(); $("resumeInput").focus(); });
+$("clearJd").addEventListener("click", function(){ $("jdInput").value = ""; updateCounts(); $("jdInput").focus(); });
+$("resumeInput").addEventListener("input", updateCounts);
+$("jdInput").addEventListener("input", updateCounts);
+document.querySelectorAll(".lang-switch button").forEach(function(b){
+  b.addEventListener("click", function(){ LANG = b.getAttribute("data-lang"); applyLang(); });
+});
+$("downloadBtn").addEventListener("click", function(){
+  if (!lastReport) return;
+  var blob = new Blob([reportText(lastReport)], { type: "text/plain;charset=utf-8" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = "resume-health-check-report.txt";
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+});
+$("copyReportBtn").addEventListener("click", function(){
+  if (!lastReport) return;
+  copyText(reportText(lastReport), $("copyReportBtn"), t().copiedReport);
+});
+
+/* ---------------- File upload (PDF / DOCX / TXT, parsed locally) ---------------- */
+function setStatus(el, msg, cls){
+  el.textContent = msg || "";
+  el.className = "fetch-status" + (msg ? " show " + (cls || "info") : "");
+}
+function cleanExtractedText(text){
+  return text.replace(/\r\n/g, "\n").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+function extractPdfText(arrayBuffer){
+  if (!window.pdfjsLib) return Promise.reject(new Error("pdf-lib-missing"));
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  return window.pdfjsLib.getDocument({ data: arrayBuffer }).promise.then(function(pdf){
+    var pages = [];
+    var chain = Promise.resolve();
+    var addPage = function(n){
+      chain = chain.then(function(){
+        return pdf.getPage(n).then(function(page){
+          return page.getTextContent().then(function(tc){
+            var lines = [], cur = null, lastY = null;
+            tc.items.forEach(function(it){
+              var y = Math.round(it.transform[5]);
+              if (lastY === null || Math.abs(y - lastY) > 2){ cur = []; lines.push(cur); lastY = y; }
+              cur.push(it.str);
+            });
+            pages.push(lines.map(function(l){ return l.join(" "); }).join("\n"));
+          });
+        });
+      });
+    };
+    for (var i = 1; i <= pdf.numPages; i++) addPage(i);
+    return chain.then(function(){ return pages.join("\n\n"); });
+  });
+}
+function extractDocxText(arrayBuffer){
+  if (!window.mammoth) return Promise.reject(new Error("docx-lib-missing"));
+  return window.mammoth.extractRawText({ arrayBuffer: arrayBuffer }).then(function(r){ return r.value || ""; });
+}
+function parseFileToText(file){
+  var name = (file.name || "").toLowerCase();
+  if (/\.txt$/.test(name) || file.type === "text/plain"){
+    return file.arrayBuffer().then(function(buf){ return new TextDecoder("utf-8").decode(buf); });
+  }
+  if (/\.pdf$/.test(name) || file.type === "application/pdf"){
+    return file.arrayBuffer().then(extractPdfText);
+  }
+  if (/\.docx$/.test(name) || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+    return file.arrayBuffer().then(extractDocxText);
+  }
+  return Promise.reject(new Error("unsupported"));
+}
+function wireUpload(opts){
+  var zone = $(opts.zoneId), input = $(opts.fileId), meta = $(opts.metaId), status = $(opts.statusId);
+  $(opts.btnId).addEventListener("click", function(){ input.click(); });
+  function handle(file){
+    if (!file) return;
+    var pk = t();
+    meta.classList.remove("show"); meta.textContent = "";
+    if (file.size > 15 * 1024 * 1024){ setStatus(status, pk.fileTooBig, "err"); return; }
+    if (!/\.(pdf|docx|txt)$/i.test(file.name || "")){
+      setStatus(status, pk.fileUnsupported, "err"); return;
+    }
+    setStatus(status, pk.parsing, "info");
+    parseFileToText(file).then(function(raw){
+      var text = cleanExtractedText(raw || "");
+      if (text.replace(/\s/g, "").length < 30){ setStatus(status, pk.fileNoText, "err"); return; }
+      $(opts.targetId).value = text;
+      $(opts.errorId).classList.remove("show");
+      updateCounts();
+      setStatus(status, "", "info");
+      meta.textContent = pk.fileReady(file.name, text.length.toLocaleString());
+      meta.classList.add("show");
+    }).catch(function(err){
+      setStatus(status, err && err.message === "unsupported" ? pk.fileUnsupported : pk.fileParseError, "err");
+    });
+  }
+  input.addEventListener("change", function(){ handle(input.files && input.files[0]); input.value = ""; });
+  ["dragenter", "dragover"].forEach(function(ev){
+    zone.addEventListener(ev, function(e){ e.preventDefault(); zone.classList.add("drag"); });
+  });
+  ["dragleave", "drop"].forEach(function(ev){
+    zone.addEventListener(ev, function(e){ e.preventDefault(); zone.classList.remove("drag"); });
+  });
+  zone.addEventListener("drop", function(e){
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    handle(f);
+  });
+}
+wireUpload({ zoneId: "resumeDrop", fileId: "resumeFile", btnId: "uploadBtn", metaId: "fileMeta", statusId: "uploadStatus", targetId: "resumeInput", errorId: "resumeError" });
+wireUpload({ zoneId: "jdDrop", fileId: "jdFile", btnId: "uploadJdBtn", metaId: "jdFileMeta", statusId: "jdUploadStatus", targetId: "jdInput", errorId: "jdError" });
+
+/* ---------------- Job description by URL ---------------- */
+function fetchWithTimeout(url, ms){
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ ctrl.abort(); }, ms);
+  return fetch(url, { signal: ctrl.signal }).then(function(r){ clearTimeout(timer); return r; }, function(e){ clearTimeout(timer); throw e; });
+}
+function htmlToText(html){
+  var withBreaks = html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|li|ul|ol|h[1-6]|section|article|tr)>/gi, "\n");
+  var doc = new DOMParser().parseFromString(withBreaks, "text/html");
+  var root = doc.querySelector("main") || doc.querySelector("article") || doc.body;
+  var text = (root && (root.textContent || "")) || "";
+  if (text.replace(/\s/g, "").length < 200 && doc.body) text = doc.body.textContent || text;
+  return cleanExtractedText(text);
+}
+function fillJdFromUrl(text, host){
+  var pk = t();
+  $("jdInput").value = text;
+  $("jdError").classList.remove("show");
+  updateCounts();
+  setStatus($("jdUrlStatus"), pk.fetchOk(text.length.toLocaleString(), host), "ok");
+}
+$("fetchJdBtn").addEventListener("click", function(){
+  var pk = t();
+  var status = $("jdUrlStatus");
+  var raw = $("jdUrl").value.trim();
+  var url;
+  try { url = new URL(raw); if (!/^https?:$/.test(url.protocol)) throw new Error("proto"); }
+  catch (e){ setStatus(status, pk.fetchInvalid, "err"); return; }
+  var btn = $("fetchJdBtn");
+  btn.disabled = true;
+  setStatus(status, pk.fetching, "info");
+  fetchWithTimeout(url.href, 12000).then(function(res){
+    if (!res.ok) throw new Error("http-" + res.status);
+    return res.text();
+  }).then(function(html){
+    var text = htmlToText(html);
+    if (text.replace(/\s/g, "").length < 200) throw new Error("too-short");
+    btn.disabled = false;
+    fillJdFromUrl(text.slice(0, 60000), url.hostname);
+  }).catch(function(directErr){
+    /* Direct read blocked (usually CORS) — go straight to the explanation
+       and the paste option, exactly as designed. The URL is never sent
+       to any third-party proxy or intermediary. */
+    btn.disabled = false;
+    setStatus(status, directErr && directErr.message === "too-short" ? pk.fetchEmpty : pk.fetchCors, "err");
+  });
+});
+$("jdUrl").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("fetchJdBtn").click(); } });
+
+applyLang();
+</script>
+</body>
+</html>
