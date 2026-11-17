@@ -309,7 +309,8 @@
     padding:12px 24px;font-weight:700;cursor:pointer;font-size:15px;min-height:3rem;
   }
   @media (prefers-color-scheme: dark){ .ghost-btn{border-color:var(--navy-soft);color:var(--navy)} }
-  footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:13px;text-align:center}
+  footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:13px;text-align:center;line-height:1.7}
+  .copyright{margin:6px 0 0;font-size:12.5px;color:var(--ink-soft);opacity:.85;letter-spacing:.01em}
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
   .honesty{margin-top:18px}
   .honesty p{font-size:14.5px;color:var(--ink-soft);margin:0 0 6px}
@@ -557,7 +558,10 @@
 
   </div>
 
-  <footer data-i18n="footer">AI Resume Health Check · Runs 100% in your browser · No account, no upload, no tracking</footer>
+  <footer>
+    <div data-i18n="footer">AI Resume Health Check · Runs 100% in your browser · No account, no upload, no tracking</div>
+    <p class="copyright" data-i18n="copyright">© 2026 Cindy Mao. All Rights Reserved.</p>
+  </footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -611,6 +615,7 @@ en: {
   copyReport: "Copy full report", download: "Download report (.txt)",
   downloadHint: "A plain-text copy of this report, generated on your device.",
   footer: "AI Resume Health Check · Runs 100% in your browser · No account, no upload, no tracking",
+  copyright: "© 2026 Cindy Mao. All Rights Reserved.",
   words: "words",
   uploadBtn: "Upload resume file",
   uploadJdBtn: "Upload job description file",
@@ -761,6 +766,7 @@ L.zh = {
   copyReport: "複製完整報告", download: "下載報告 (.txt)",
   downloadHint: "這份報告的純文字版本，在你的裝置上產生。",
   footer: "AI 履歷健檢工具 · 100% 在你的瀏覽器執行 · 無需帳號、不上傳、無追蹤",
+  copyright: "© 2026 Cindy Mao．版權所有。",
   words: "字",
   uploadBtn: "上傳履歷檔案",
   uploadJdBtn: "上傳職缺說明檔案",
@@ -910,6 +916,7 @@ L.ja = {
   copyReport: "レポート全文をコピー", download: "レポートをダウンロード (.txt)",
   downloadHint: "このレポートのプレーンテキスト版。あなたの端末上で生成されます。",
   footer: "AI 履歴書ヘルスチェック · ブラウザ内で100%実行 · アカウント不要、アップロードなし、トラッキングなし",
+  copyright: "© 2026 Cindy Mao．All Rights Reserved．",
   words: "語",
   uploadBtn: "履歴書ファイルをアップロード",
   uploadJdBtn: "求人票ファイルをアップロード",
